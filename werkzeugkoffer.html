@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Werkzeugkoffer — OKRKritikBot 3000</title>
+<link rel="stylesheet" href="shared/tokens.css" />
+<style>
+  body { background: var(--lavendel); color: var(--dunkel); min-height: 100vh; --r-card: 6px; --r-panel: 10px; }
+  .wrap { width: min(1160px, 92vw); margin-inline: auto; }
+
+  /* ── NAV ── */
+  nav.top { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 12px clamp(18px,4vw,40px); background: rgba(255,255,255,0.93); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(54,52,157,0.1); }
+  nav.top a.home { display: flex; align-items: center; text-decoration: none; }
+  nav.top .brand { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--blau); line-height: 1.25; }
+  nav.top .right { display: flex; gap: 3px; align-items: center; }
+  nav.top .right a { font-family: var(--display); font-weight: 600; font-size: 13.5px; text-decoration: none; color: rgba(13,12,43,0.52); padding: 7px 11px; border-radius: 7px; transition: background .15s, color .15s; }
+  nav.top .right a:hover { background: rgba(54,52,157,0.06); color: var(--blau); }
+  nav.top .right a.act { color: var(--blau); font-weight: 700; }
+  nav.top .right a.q { background: var(--minze); color: var(--dunkel); font-weight: 700; margin-left: 6px; }
+  nav.top .right a.q:hover { filter: brightness(1.07); background: var(--minze); }
+  @media (max-width: 760px) { .nav-hide { display: none !important; } }
+
+  /* ── HERO ── */
+  .koffer-hero { background: var(--lavendel); padding: clamp(40px,6vh,72px) 0 clamp(34px,5vh,52px); }
+  .koffer-hero .kicker { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(54,52,157,0.5); margin-bottom: 12px; }
+  .koffer-hero h1 { font-size: clamp(2.1rem, 4.4vw, 3.3rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.0; color: var(--dunkel); margin: 0; text-wrap: balance; }
+  .koffer-hero p { font-size: clamp(1rem,1.5vw,1.18rem); color: var(--fg-2); line-height: 1.6; margin-top: 14px; max-width: 60ch; }
+
+  /* ── PHASE GROUPS ── */
+  .phases { padding-bottom: clamp(60px,9vh,110px); }
+  .phase { display: grid; grid-template-columns: 230px 1fr; gap: clamp(24px,4vw,48px); padding: clamp(28px,4vh,44px) 0; border-top: 1px solid rgba(54,52,157,0.14); }
+  .phase:first-child { border-top: 1.5px solid rgba(54,52,157,0.2); }
+  @media (max-width: 760px) { .phase { grid-template-columns: 1fr; gap: 18px; } }
+
+  .phase-label .pnum { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blau); margin-bottom: 7px; }
+  .phase-label h2 { font-family: var(--display); font-weight: 800; font-size: clamp(1.3rem,2.2vw,1.7rem); letter-spacing: -0.025em; color: var(--dunkel); line-height: 1.05; }
+  .phase-label .pdesc { font-size: 14px; color: var(--fg-muted); line-height: 1.55; margin-top: 9px; max-width: 30ch; }
+  .phase-label .pmeta { font-family: var(--display); font-weight: 700; font-size: 11.5px; color: rgba(54,52,157,0.45); margin-top: 14px; }
+
+  .phase-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
+  @media (max-width: 560px) { .phase-tools { grid-template-columns: 1fr; } }
+
+  /* ── TOOL CARD ── */
+  .tool-card { background: #fff; border: 1.5px solid rgba(54,52,157,0.12); border-radius: var(--r-card); padding: 20px 22px; display: flex; flex-direction: column; text-decoration: none; color: inherit; min-height: 168px; transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease); }
+  a.tool-card:hover { transform: translateY(-3px); border-color: rgba(54,52,157,0.32); box-shadow: 0 16px 40px rgba(54,52,157,0.13); }
+  .tool-card.soon { opacity: 0.66; }
+
+  .tc-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 13px; }
+  .kpill { font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .kpill.pdf { background: rgba(54,52,157,0.09); color: var(--blau); border: 1px solid rgba(54,52,157,0.2); }
+  .kpill.xls { background: rgba(77,255,176,0.22); color: #0a6640; border: 1px solid rgba(77,255,176,0.55); }
+  .badge-soon { font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dunkel); background: var(--minze); padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+
+  .tool-card h3 { font-family: var(--display); font-weight: 800; font-size: 1.12rem; letter-spacing: -0.02em; color: var(--dunkel); line-height: 1.18; }
+  .tool-card p { font-size: 13.5px; color: var(--fg-muted); line-height: 1.5; margin-top: 8px; }
+  .tc-link { margin-top: auto; padding-top: 16px; font-family: var(--display); font-weight: 800; font-size: 13.5px; color: var(--blau); display: flex; align-items: center; gap: 8px; }
+  .tc-link .ch { transition: transform .2s; font-weight: 800; }
+  a.tool-card:hover .tc-link .ch { transform: translateX(5px); }
+  .tc-link.muted { color: var(--fg-muted); }
+
+  /* ── FOOTER ── */
+  footer { background: var(--dunkel); color: #fff; padding: 40px 0 48px; }
+  footer .inner { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+  footer .ft-title { font-family: var(--display); font-weight: 800; font-size: 14px; }
+  footer .ft-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 5px; }
+  footer a { font-family: var(--display); font-weight: 700; font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; }
+  footer a:hover { color: #fff; }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a class="home" href="index.html">
+    <span class="brand">Ziel- und<br>Wirkungssteuerung</span>
+  </a>
+  <div class="right">
+    <a href="index.html#bot" class="nav-hide">Bot</a>
+    <a href="werkzeugkoffer.html" class="act nav-hide">Werkzeugkoffer</a>
+    <a href="lernpfad.html" class="nav-hide">Lernpfad</a>
+    <a href="quiz.html" class="nav-hide">Quiz</a>
+    <a href="index.html#bot" class="q">Bot öffnen ›</a>
+  </div>
+</nav>
+
+<header class="koffer-hero">
+  <div class="wrap">
+    <div class="kicker">02 — Werkzeugkoffer</div>
+    <h1>Alles für saubere OKR-Sets.</h1>
+    <p>Werkzeuge entlang des OKR-Wegs — vom Formulieren über das Tracken bis zur Moderation. Gemacht für Verwaltungen, die ohne Beratersprech auskommen wollen.</p>
+  </div>
+</header>
+
+<main class="phases">
+  <div class="wrap">
+
+    <!-- PHASE 1 — FORMULIEREN -->
+    <section class="phase" data-screen-label="Phase 1 Formulieren">
+      <div class="phase-label">
+        <div class="pnum">Phase 1</div>
+        <h2>Formulieren</h2>
+        <p class="pdesc">Vom vagen Vorsatz zum echten OKR-Set — Zustand statt Aktivität.</p>
+        <div class="pmeta">1 von 2 verfügbar</div>
+      </div>
+      <div class="phase-tools">
+        <a class="tool-card" href="assets/downloads/Handreichung-OKR-Sets.pdf" target="_blank" rel="noopener">
+          <div class="tc-top"><span class="kpill pdf">PDF · 4 Seiten</span></div>
+          <h3>Handreichung: OKR-Sets formulieren</h3>
+          <p>Von guten Vorsätzen zum ersten Objective — und vom Objective zu überprüfbaren Key Results. Mit Beispielen und Mini-Checks.</p>
+          <span class="tc-link">Herunterladen <span class="ch">›</span></span>
+        </a>
+        <div class="tool-card soon">
+          <div class="tc-top"><span class="kpill pdf">PDF · 1 Seite</span><span class="badge-soon">folgt</span></div>
+          <h3>OKR-Spickzettel</h3>
+          <p>Eine Seite für den Schreibtisch: Zustand statt Aktivität, überprüfbar statt zahlenverliebt.</p>
+          <span class="tc-link muted">In Vorbereitung</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHASE 2 — TRACKEN & STEUERN -->
+    <section class="phase" data-screen-label="Phase 2 Tracken">
+      <div class="phase-label">
+        <div class="pnum">Phase 2</div>
+        <h2>Tracken &amp; Steuern</h2>
+        <p class="pdesc">Fortschritt sichtbar machen — Confidence, Status und Wirkung über das Quartal.</p>
+        <div class="pmeta">1 von 1 verfügbar</div>
+      </div>
+      <div class="phase-tools">
+        <a class="tool-card" href="assets/downloads/OKR-Tracking.xlsx" target="_blank" rel="noopener">
+          <div class="tc-top"><span class="kpill xls">Excel · Vorlage</span></div>
+          <h3>Tracking-Tabelle</h3>
+          <p>Excel-Vorlage zum Verfolgen von Confidence, Fortschritt und Check-in-Status über das gesamte Quartal.</p>
+          <span class="tc-link">Herunterladen <span class="ch">›</span></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- PHASE 3 — MODERIEREN -->
+    <section class="phase" data-screen-label="Phase 3 Moderieren">
+      <div class="phase-label">
+        <div class="pnum">Phase 3</div>
+        <h2>Moderieren</h2>
+        <p class="pdesc">Aus Status-Runden echte Steuerung machen — Ablauf, Leitfragen, Timeboxing.</p>
+        <div class="pmeta">1 von 1 verfügbar</div>
+      </div>
+      <div class="phase-tools">
+        <a class="tool-card" href="assets/downloads/OKR-Check-Ins-Moderieren.pdf" target="_blank" rel="noopener">
+          <div class="tc-top"><span class="kpill pdf">PDF · Leitfaden</span></div>
+          <h3>Check-in-Moderationshilfe</h3>
+          <p>Ablauf, Leitfragen und Timeboxing für das wöchentliche Check-in — damit aus Status-Runden echte Steuerung wird.</p>
+          <span class="tc-link">Herunterladen <span class="ch">›</span></span>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap inner">
+    <div>
+      <div class="ft-title">OKRKritikBot 3000 — Werkzeugkoffer</div>
+      <div class="ft-sub">Die Sammlung wächst. Schau gerne wieder vorbei.</div>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <a href="lernpfad.html">Lernpfad ›</a>
+      <a href="quiz.html">Quiz ›</a>
+      <a href="index.html">← Startseite</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

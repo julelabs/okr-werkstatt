@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quiz — Objective, Key Result oder keins? | BMDS</title>
+<link rel="stylesheet" href="shared/tokens.css" />
+<style>
+  body { background: var(--lavendel); color: var(--dunkel); min-height: 100vh; --r-card: 6px; --r-panel: 10px; }
+  .wrap { width: min(760px, 92vw); margin-inline: auto; }
+
+  nav.top { position: sticky; top: 0; z-index: 50; display:flex; align-items:center; justify-content:space-between; padding: 12px clamp(18px,4vw,40px); background: rgba(255,255,255,0.93); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(54,52,157,0.1); }
+  nav.top a.home { display:flex; align-items:center; text-decoration:none; }
+  nav.top .brand { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--blau); line-height: 1.25; }
+  nav.top .right { display:flex; gap:3px; align-items:center; }
+  nav.top .right a { font-family: var(--display); font-weight:600; font-size:13.5px; text-decoration:none; color: rgba(13,12,43,0.52); padding: 7px 11px; border-radius:7px; transition: background .15s, color .15s; }
+  nav.top .right a:hover { background: rgba(54,52,157,0.06); color: var(--blau); }
+  nav.top .right a.act { color: var(--blau); font-weight: 700; }
+  nav.top .right a.q { background: var(--minze); color: var(--dunkel); font-weight: 700; margin-left: 6px; }
+
+  .quizwrap { padding: 0 0 90px; }
+  .q-play { width: min(680px, 92vw); margin-inline: auto; padding-top: clamp(28px,5vh,52px); }
+
+  /* INTRO HERO — left aligned, 2 col (matches Lernpfad) */
+  .q-hero { width: min(1160px, 92vw); margin-inline: auto; padding: clamp(36px,6vh,72px) 0 clamp(40px,6vh,76px); display: grid; grid-template-columns: 1.02fr 1fr; gap: clamp(32px,5vw,64px); align-items: center; }
+  @media (max-width: 880px){ .q-hero { grid-template-columns: 1fr; gap: 32px; } }
+  .q-hero .kicker { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(54,52,157,0.5); margin-bottom: 12px; }
+  .q-hero h1 { font-size: clamp(2.1rem, 4.6vw, 3.4rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.0; text-wrap: balance; color: var(--dunkel); margin: 0; }
+  .q-hero h1 .hl { color: var(--blau); }
+  .q-hero p { color: var(--fg-2); font-size: clamp(1rem,1.5vw,1.15rem); margin-top: 16px; line-height: 1.6; max-width: 44ch; }
+  .meta-chips { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 22px; }
+  .meta-chips .mc { font-family: var(--display); font-weight: 700; font-size: 12.5px; padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid rgba(54,52,157,0.15); color: var(--dunkel); }
+  .q-hero .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+
+  /* DEMO CARD (right) */
+  .demo-card { background: #fff; border: 1.5px solid rgba(54,52,157,0.1); border-radius: var(--r-card); padding: 22px 24px; box-shadow: 0 10px 34px rgba(54,52,157,0.12); }
+  .demo-card .dc-tag { font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: 11px; display: flex; align-items: center; gap: 8px; }
+  .demo-card .dc-tag::before { content: 'Beispiel'; background: var(--lavendel); color: var(--blau); padding: 3px 9px; border-radius: 999px; letter-spacing: 0.04em; }
+  .demo-card .dc-stmt { font-family: var(--display); font-weight: 800; font-size: 1.18rem; letter-spacing: -0.02em; line-height: 1.3; color: var(--dunkel); margin-bottom: 16px; text-wrap: balance; }
+  .demo-card .dc-opts { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; margin-bottom: 15px; }
+  .demo-card .dc-opt-wrap { text-align: center; }
+  .demo-card .dc-opt { font-family: var(--display); font-weight: 700; font-size: 12.5px; border-radius: var(--r-card); padding: 12px 6px; }
+  .demo-card .dc-opt.neu { background: var(--lavendel); border: 1.5px solid rgba(54,52,157,0.15); color: var(--dunkel); }
+  .demo-card .dc-opt.ok  { background: rgba(77,255,176,0.28); border: 1.5px solid rgba(77,255,176,0.75); color: #0a6640; }
+  .demo-card .dc-opt.err { background: rgba(219,0,69,0.08); border: 1.5px solid rgba(219,0,69,0.35); color: var(--kirsche); }
+  .demo-card .dc-state { font-family: var(--display); font-weight: 600; font-size: 9.5px; margin-top: 5px; letter-spacing: 0.02em; }
+  .demo-card .dc-state.neu { color: var(--fg-muted); }
+  .demo-card .dc-state.ok  { color: #0a6640; }
+  .demo-card .dc-state.err { color: var(--kirsche); }
+  .demo-card .dc-fb { background: rgba(77,255,176,0.12); border-left: 3px solid var(--minze); border-radius: var(--r-card); padding: 12px 15px; }
+  .demo-card .dc-fb .v { font-family: var(--display); font-weight: 800; font-size: 11px; color: #0a6640; margin-bottom: 4px; }
+  .demo-card .dc-fb .x { font-size: 12.5px; color: var(--fg-2); line-height: 1.5; }
+
+  /* BUTTONS */
+  .btn { font-family: var(--display); font-weight: 700; font-size: 15px; cursor: pointer; border: none; border-radius: 8px; padding: 14px 26px; text-decoration: none; display: inline-flex; align-items: center; gap: 9px; transition: transform .15s var(--ease), filter .2s var(--ease), background .2s var(--ease); }
+  .btn:active { transform: scale(0.97); }
+  .btn-accent { background: var(--minze); color: var(--dunkel); }
+  .btn-accent:hover { filter: brightness(1.07); }
+  .btn-ghost { background: transparent; color: var(--blau); border: 1.5px solid rgba(54,52,157,0.28); }
+  .btn-ghost:hover { background: rgba(54,52,157,0.06); }
+  .btn .ch { font-weight: 800; letter-spacing: -0.05em; }
+  .intro .btn { margin-top: 0; }
+
+  /* PROGRESS */
+  .qhead { display:flex; align-items:center; justify-content:space-between; margin-bottom: 18px; }
+  .qhead .count { font-family: var(--display); font-weight:800; font-size:14px; color: var(--blau); letter-spacing:0.03em; }
+  .qhead .score { font-family: var(--display); font-weight:700; font-size:14px; color: var(--fg-muted); }
+  .track { height: 4px; background: rgba(54,52,157,0.12); border-radius:999px; overflow:hidden; margin-bottom: 28px; }
+  .track .fill { height:100%; background: var(--minze); width: 0; transition: width .4s var(--ease); }
+
+  /* STATEMENT CARD */
+  .stmt { background: #fff; border: 1.5px solid rgba(54,52,157,0.1); border-radius: var(--r-panel); padding: clamp(26px,4vw,40px); box-shadow: 0 4px 20px rgba(54,52,157,0.09); }
+  .stmt .ctx { font-family: var(--display); font-weight:700; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color: var(--fg-muted); margin-bottom: 14px; }
+  .stmt .s { font-size: clamp(1.25rem, 2.8vw, 1.75rem); font-weight: 700; font-family: var(--display); letter-spacing:-0.02em; line-height: 1.3; text-wrap: balance; color: var(--dunkel); }
+
+  /* OPTIONS */
+  .options { display:grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 26px; }
+  @media (max-width: 600px){ .options { grid-template-columns: 1fr; } }
+  .opt { font-family: var(--display); font-weight:700; font-size:15px; padding: 16px 12px; border-radius: var(--r-card); border: 1.5px solid rgba(54,52,157,0.15); background: var(--lavendel); color: var(--dunkel); cursor:pointer; transition: all .18s var(--ease); text-align:center; }
+  .opt:hover:not(:disabled) { border-color: var(--blau); background: rgba(54,52,157,0.07); transform: translateY(-2px); }
+  .opt:disabled { cursor: default; }
+  .opt.correct { background: rgba(77,255,176,0.28); border-color: rgba(77,255,176,0.75); color: #0a6640; }
+  .opt.wrong { background: rgba(219,0,69,0.08); border-color: rgba(219,0,69,0.35); color: var(--kirsche); }
+  .opt .sub { display:block; font-weight:600; font-size:11.5px; opacity:.7; margin-top:4px; letter-spacing:0.02em; }
+
+  /* FEEDBACK */
+  .feedback { margin-top: 20px; border-radius: var(--r-card); padding: 16px 20px; display:none; animation: rise .3s var(--ease); }
+  @keyframes rise { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+  .feedback.show { display:block; }
+  .feedback.right { background: rgba(77,255,176,0.12); border-left: 3px solid var(--minze); }
+  .feedback.wrong { background: rgba(219,0,69,0.06); border-left: 3px solid var(--kirsche); }
+  .feedback .verdict { font-family: var(--display); font-weight:800; font-size:14px; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .feedback.right .verdict { color: #0a6640; }
+  .feedback.wrong .verdict { color: var(--kirsche); }
+  .feedback .exp { margin-top: 10px; font-size: 15px; line-height: 1.55; color: var(--fg-2); }
+  .feedback .exp b { color: var(--dunkel); }
+  .feedback .next-row { margin-top: 16px; }
+
+  /* RESULT */
+  .result { text-align:center; }
+  .result .big { font-size: clamp(3.5rem, 9vw, 6rem); font-weight:800; font-family: var(--display); letter-spacing:-0.04em; line-height:1; color: var(--dunkel); }
+  .result .big .slash { color: rgba(13,12,43,0.28); }
+  .result .verdict-t { color: var(--blau); font-family: var(--display); font-weight:800; font-size: clamp(1.3rem,2.6vw,1.8rem); margin-top: 18px; letter-spacing:-0.02em; }
+  .result .verdict-s { color: var(--fg-2); font-size: 1.1rem; margin-top: 12px; line-height:1.55; max-width: 44ch; margin-inline:auto; }
+  .result .cta-row { display:flex; gap: 14px; justify-content:center; flex-wrap:wrap; margin-top: 34px; }
+</style>
+</head>
+<body>
+  <nav class="top">
+    <a class="home" href="index.html">
+      <span class="brand">Ziel- und<br>Wirkungssteuerung</span>
+    </a>
+    <div class="right">
+      <a href="index.html#bot">Bot</a>
+      <a href="werkzeugkoffer.html">Werkzeugkoffer</a>
+      <a href="lernpfad.html">Lernpfad</a>
+      <a href="quiz.html" class="act">Quiz</a>
+      <a href="index.html#bot" class="q">Bot öffnen ›</a>
+    </div>
+  </nav>
+
+  <div class="quizwrap" id="app"></div>
+
+<script>
+const Q = [
+  { ctx: "Bürgerservice", s: "Die Bürgerinnen und Bürger erleben Anträge auf Wohngeld als spürbar einfacher und schneller.",
+    a: "objective", exp: "Ein erlebbarer Zielzustand am Ende — beschreibend, ambitioniert, ohne Zahl. Genau so sieht ein <b>Objective</b> aus." },
+  { ctx: "Digitalisierung", s: "Bis Quartalsende sind 80 % der Wohngeld-Anträge digital eingereicht.",
+    a: "kr", exp: "Am Quartalsende eindeutig überprüfbar — erreicht oder nicht. Die Zahl macht den Zustand greifbar. Klares <b>Key Result</b>." },
+  { ctx: "Aktenführung", s: "Einführung der E-Akte im Referat Z.",
+    a: "keins", exp: "Das ist eine <b>Maßnahme bzw. ein Projekt</b> — sie beschreibt weder den Zielzustand noch ein überprüfbares Ergebnis. Kein OKR." },
+  { ctx: "Abteilungsziel", s: "Wir verbessern die Zusammenarbeit zwischen den Referaten.",
+    a: "keins", exp: "Ein guter Vorsatz, aber viel zu vage: kein beschriebener Zustand, nichts Überprüfbares. Noch <b>kein Objective</b> — erst der Startpunkt dafür." },
+  { ctx: "Wissensmanagement", s: "Für alle Referate liegt eine ohne Rückfragen nutzbare Übersicht zu Themen und Zuständigkeiten vor.",
+    a: "kr", exp: "Überprüfbares Ergebnis (liegt vor / liegt nicht vor) — ganz ohne Zahl, trotzdem messbar. Ein <b>Key Result</b>, denn Überprüfbarkeit braucht nicht zwingend Zahlen." },
+  { ctx: "Steuerung", s: "Die Fachaufsicht entscheidet auf einer verlässlichen, gemeinsam geteilten Datengrundlage.",
+    a: "objective", exp: "Ein erstrebenswerter, qualitativer Zustand — beschreibend statt aktivistisch. Das ist ein <b>Objective</b>." },
+  { ctx: "Personalentwicklung", s: "Schulung von 30 Mitarbeitenden zu OKR durchführen.",
+    a: "keins", exp: "Achtung, Falle: Die Zahl misst hier nur <b>Aktivität</b>, nicht Wirkung. Eine Maßnahme bleibt eine Maßnahme — auch mit Zahl. Kein Key Result." },
+  { ctx: "Fallbearbeitung", s: "Die Zahl unbearbeiteter Altfälle ist von 1.200 auf unter 300 gesenkt.",
+    a: "kr", exp: "Am Quartalsende klar überprüfbar, die Zahl macht den Fortschritt greifbar. Ein sauberes <b>Key Result</b>." },
+  { ctx: "Onboarding", s: "Das Onboarding neuer Kolleginnen und Kollegen fühlt sich strukturiert und willkommen heißend an.",
+    a: "objective", exp: "Ein qualitativer, erlebbarer Zielzustand. Beschreibend formuliert — ein <b>Objective</b>." },
+  { ctx: "Routine", s: "Monatliches Jour fixe mit allen Referatsleitungen etablieren.",
+    a: "keins", exp: "Ein To-do bzw. eine Routine — kein Zielzustand und kein überprüfbares Ergebnis im OKR-Sinn. <b>Kein OKR</b> (höchstens eine Maßnahme auf dem Weg dahin)." }
+];
+
+const LABELS = {
+  objective: { t: "Objective", sub: "Zielzustand", color: "var(--minze)" },
+  kr:        { t: "Key Result", sub: "messbar", color: "#7FB3FF" },
+  keins:     { t: "Keins von beidem", sub: "Maßnahme / vage", color: "#FF6E92" }
+};
+const ORDER = ["objective","kr","keins"];
+
+const app = document.getElementById('app');
+let i = 0, score = 0, answered = false;
+
+function intro(){
+  app.innerHTML = `
+    <div class="q-hero">
+      <div class="q-hero-text">
+        <div class="kicker">04 — Quiz</div>
+        <h1>Objective, Key Result <span class="hl">oder Maßnahme?</span></h1>
+        <p>Zehn echte Sätze aus Verwaltungsteams. Kannst du sie einordnen? Der Bot erklärt dir sofort, warum.</p>
+        <div class="meta-chips">
+          <span class="mc">10 Fragen</span>
+          <span class="mc">~5 Minuten</span>
+          <span class="mc">Sofortfeedback</span>
+        </div>
+        <div class="hero-btns">
+          <button class="btn btn-accent" id="start">Quiz starten <span class="ch">›››</span></button>
+          <a class="btn btn-ghost" href="lernpfad.html">Erst zum Lernpfad</a>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="dc-tag"></div>
+        <div class="dc-stmt">„Wir schaffen 30 neue Laptops für das Homeoffice an.“</div>
+        <div class="dc-opts">
+          <div class="dc-opt-wrap"><div class="dc-opt neu">Objective</div><div class="dc-state neu">Neutral</div></div>
+          <div class="dc-opt-wrap"><div class="dc-opt neu">Key Result</div><div class="dc-state neu">Neutral</div></div>
+          <div class="dc-opt-wrap"><div class="dc-opt ok">Maßnahme ✓</div><div class="dc-state ok">Richtig</div></div>
+        </div>
+        <div class="dc-fb">
+          <div class="v">Richtig!</div>
+          <div class="x">Eine Anschaffung ist eine klassische Maßnahme — eine Aktivität, kein Zielzustand und nichts am Quartalsende Messbares.</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('start').addEventListener('click', ()=>{ i=0; score=0; render(); });
+}
+
+function render(){
+  answered = false;
+  const q = Q[i];
+  app.innerHTML = `
+    <div class="q-play">
+    <div class="qhead">
+      <span class="count">Frage ${i+1} / ${Q.length}</span>
+      <span class="score">Punkte: ${score}</span>
+    </div>
+    <div class="track"><div class="fill" style="width:${(i/Q.length)*100}%"></div></div>
+    <div class="stmt">
+      <div class="ctx">${q.ctx}</div>
+      <div class="s">„${q.s}“</div>
+      <div class="options">
+        ${ORDER.map(k=>`<button class="opt" data-k="${k}">${LABELS[k].t}<span class="sub">${LABELS[k].sub}</span></button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>
+    </div>`;
+  app.querySelectorAll('.opt').forEach(o=> o.addEventListener('click', ()=> choose(o.dataset.k)));
+}
+
+function choose(k){
+  if (answered) return;
+  answered = true;
+  const q = Q[i];
+  const correct = q.a === k;
+  if (correct) score++;
+  app.querySelectorAll('.opt').forEach(o=>{
+    o.disabled = true;
+    if (o.dataset.k === q.a) o.classList.add('correct');
+    else if (o.dataset.k === k) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb');
+  fb.className = 'feedback show ' + (correct ? 'right':'wrong');
+  fb.innerHTML = `
+    <div class="verdict">${correct ? '✓ Richtig.' : '✗ Knapp daneben.'} <span style="opacity:.8;font-weight:700;">Es ist: ${LABELS[q.a].t}</span></div>
+    <div class="exp">${q.exp}</div>
+    <div class="next-row"><button class="btn btn-accent" id="nx">${i < Q.length-1 ? 'Nächste Frage ›' : 'Auswertung ansehen ›››'}</button></div>`;
+  document.querySelector('.track .fill').style.width = ((i+1)/Q.length)*100 + '%';
+  document.getElementById('nx').addEventListener('click', ()=>{
+    if (i < Q.length-1){ i++; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+    else result();
+  });
+}
+
+function result(){
+  let t, s;
+  if (score >= 9){ t = "Der Bot ist beeindruckt."; s = "(Er gibt das nur ungern zu.) Du trennst Zustand, Ergebnis und Maßnahme im Schlaf. Bring jetzt deine echten Ziele mit."; }
+  else if (score >= 6){ t = "Solide Arbeit."; s = "Der Bot nickt knapp — und sucht weiter nach Maßnahmen im Tarnanzug. Eine Runde im Lernpfad schärft die letzten Kanten."; }
+  else if (score >= 3){ t = "Ausbaufähig."; s = "Zustand, Ergebnis und Aktivität geraten noch durcheinander. Gute Nachricht: Genau dafür gibt es den Lernpfad."; }
+  else { t = "Der Bot hat schon den Lernpfad-Link kopiert."; s = "Kein Drama — fast jedes Set startet als Maßnahmenliste. Einmal durch den Lernpfad und das sieht anders aus."; }
+  app.innerHTML = `
+    <div class="q-play">
+    <div class="result">
+      <div class="qhead" style="justify-content:center;"><span class="count">Auswertung</span></div>
+      <div class="big">${score}<span class="slash"> / ${Q.length}</span></div>
+      <div class="verdict-t">${t}</div>
+      <div class="verdict-s">${s}</div>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="lernpfad.html">Zum Lernpfad <span class="ch">›››</span></a>
+        <button class="btn btn-ghost" id="again">Nochmal spielen</button>
+      </div>
+    </div>
+    </div>`;
+  document.getElementById('again').addEventListener('click', ()=>{ i=0; score=0; render(); window.scrollTo({top:0,behavior:'smooth'}); });
+}
+
+intro();
+</script>
+</body>
+</html>

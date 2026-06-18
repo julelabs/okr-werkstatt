@@ -1,0 +1,80 @@
+/* ============================================================
+   BMDS / Das Haus — Design Tokens (adapted for OKRKritikBot site)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+@font-face {
+  font-family: 'BundesSans';
+  src: url('../assets/fonts/BundesSans-Web-Regular.woff2') format('woff2'),
+       url('../assets/fonts/BundesSans-Web-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BundesSans';
+  src: url('../assets/fonts/BundesSans-Web-RegularItalic.woff2') format('woff2'),
+       url('../assets/fonts/BundesSans-Web-RegularItalic.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* Brand palette */
+  --blau:        #36349D;
+  --minze:       #4DFFB0;
+  --kirsche:     #DB0045;
+  --lavendel:    #E3E6F2;
+  --weiss:       #FFFFFF;
+  --dunkel:      #0D0C2B;
+
+  --blau-10:     #EEEEF9;
+  --blau-20:     #C5C4EA;
+  --blau-40:     #8B89CF;
+  --blau-60:     #5957B4;
+  --blau-80:     #3B39A6;
+  --minze-20:    #C9FFF0;
+  --minze-40:    #96FFD9;
+  --kirsche-10:  #FCEEE3;
+  --kirsche-60:  #E84070;
+
+  /* Semantic (light) */
+  --fg:          var(--dunkel);
+  --fg-2:        #4A4869;
+  --fg-muted:    #7C7AA8;
+  --line:        rgba(54,52,157,0.15);
+  --line-strong: rgba(54,52,157,0.35);
+
+  /* Type */
+  --display: 'Open Sans', system-ui, sans-serif;
+  --body:    'BundesSans', 'Open Sans', system-ui, sans-serif;
+
+  /* Accent — overridable by Tweaks */
+  --accent:      var(--minze);
+  --accent-ink:  var(--dunkel);
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--body);
+  color: var(--fg);
+  background: var(--weiss);
+  line-height: 1.5;
+}
+
+::selection { background: var(--minze); color: var(--dunkel); }
+
+h1,h2,h3,h4 { font-family: var(--display); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+
+a { color: inherit; }
+
+/* The >>> motif rendered with text for crispness */
+.chev { font-family: var(--display); font-weight: 800; letter-spacing: -0.05em; }

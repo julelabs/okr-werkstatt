@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+
+# Local editor and OS files
+.vscode/
+.idea/
+
+# Generated deploy bundles
+*.zip
