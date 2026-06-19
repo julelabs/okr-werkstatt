@@ -26,5 +26,5 @@ http://127.0.0.1:8765/index.html
 ## Notes
 
 - This is currently a static HTML/CSS/JS site.
-- `index.html` loads React/Babel from `unpkg.com` for the tweaks panel.
+- The site has no runtime dependency on external JavaScript libraries.
 - The surrounding Outcome Office vault folder contains project notes, backlog, references, and deploy exports.
