@@ -47,7 +47,7 @@
   .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(3.2rem, 6.4vw, 5.5rem); letter-spacing: -0.04em; line-height: 0.97; color: var(--dunkel); margin: 0; }
   .hero h1 .hl { color: var(--blau); }
   .hero .sub-1 { margin-top: 26px; font-size: clamp(1.08rem, 1.7vw, 1.28rem); line-height: 1.62; color: rgba(13,12,43,0.78); max-width: 42ch; }
-  .hero .sub-2 { margin-top: 10px; font-size: clamp(1rem, 1.5vw, 1.15rem); line-height: 1.55; color: rgba(13,12,43,0.48); max-width: 44ch; }
+  .hero .sub-2 { margin-top: 10px; font-size: clamp(1rem, 1.5vw, 1.15rem); line-height: 1.55; color: rgba(13,12,43,0.66); max-width: 44ch; }
   .hero-cta { display: flex; gap: 13px; margin-top: 30px; flex-wrap: wrap; }
 
   /* ══ BUTTONS ══ */
@@ -75,8 +75,8 @@
     padding: 26px 28px; width: clamp(320px, 44vw, 440px); min-height: 175px;
     font-family: var(--body);
   }
-  .dc-meta { font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(54,52,157,0.4); margin-bottom: 11px; }
-  .dc-field { font-family: var(--display); font-weight: 800; font-size: 11.5px; letter-spacing: 0.07em; text-transform: uppercase; color: #bbb; margin-bottom: 7px; }
+  .dc-meta { font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(54,52,157,0.6); margin-bottom: 11px; }
+  .dc-field { font-family: var(--display); font-weight: 800; font-size: 11.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: 7px; }
   .dc-text { font-size: 16px; line-height: 1.48; color: var(--dunkel); }
   .dc-text.underlined { text-decoration: underline; text-decoration-color: var(--kirsche); text-decoration-thickness: 2px; }
   .dc-ann { display: flex; align-items: flex-start; gap: 9px; margin-top: 13px; }
@@ -84,7 +84,8 @@
   .dc-pill.red { color: var(--kirsche); background: rgba(219,0,69,0.09); border: 1px solid rgba(219,0,69,0.22); }
   .dc-pill.grn { color: #0a6640; background: rgba(77,255,176,0.25); border: 1px solid rgba(77,255,176,0.55); }
   .dc-note { font-size: 13.5px; color: var(--fg-muted); line-height: 1.42; }
-  .dc-better { font-size: 15px; color: var(--dunkel); line-height: 1.52; border-left: 3px solid var(--minze); padding-left: 13px; margin-top: 9px; }
+  .dc-better { font-size: 15px; color: var(--dunkel); line-height: 1.52; margin-top: 9px; }
+  .dc-swipe { background-image: linear-gradient(transparent 58%, rgba(77,255,176,0.6) 58%); padding: 0 1px; }
 
   .doc-card:nth-child(1) { top: 0;     left: 44px;  transform: rotate(-3deg);   z-index: 1; }
   .doc-card:nth-child(2) { top: 148px; left: 14px;  transform: rotate(2.2deg);  z-index: 2; }
@@ -112,7 +113,7 @@
   .bot-card h3 { font-size: 1.65rem; font-weight: 800; color: var(--dunkel); line-height: 1.1; }
   .bot-card p { color: var(--fg-2); margin-top: 14px; line-height: 1.65; font-size: 15px; }
   .bot-card .btn { margin-top: 24px; }
-  .embed-note { margin-top: 16px; font-size: 13px; color: var(--fg-muted); display: flex; gap: 8px; align-items: flex-start; }
+  .embed-note { margin-top: 16px; font-size: 13px; color: var(--fg-2); display: flex; gap: 8px; align-items: flex-start; }
   .embed-note .ch { color: var(--blau); font-weight: 800; flex-shrink: 0; }
 
   .prompts { display: flex; flex-direction: column; gap: 12px; }
@@ -120,7 +121,7 @@
   .prompt { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; background: #fff; border: 1px solid var(--line); border-radius: var(--r-card); cursor: pointer; text-align: left; width: 100%; font-family: var(--body); transition: border-color .2s, transform .15s, box-shadow .2s; }
   .prompt:hover { border-color: var(--blau-40); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(54,52,157,0.09); }
   .prompt .q { font-size: 14px; color: var(--fg); line-height: 1.45; }
-  .prompt .q span { color: var(--fg-muted); }
+  .prompt .q span { color: var(--fg-2); }
   .prompt .copy { margin-left: auto; font-family: var(--display); font-weight: 700; font-size: 12px; color: var(--blau); white-space: nowrap; padding-left: 8px; }
   .prompt.copied .copy { color: var(--kirsche); }
 
@@ -158,8 +159,6 @@
   footer.site .wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
   footer.site .fnote { font-size: 13px; color: var(--fg-muted); line-height: 1.65; max-width: 44ch; }
   footer.site .fnote b { color: var(--fg-2); font-weight: 600; }
-
-  #tweaks-root:empty { display: none; }
 </style>
 </head>
 <body>
@@ -197,9 +196,8 @@
     <div class="hero-docs">
       <!-- Doc 1: bad objective -->
       <div class="doc-card">
-        <div class="dc-meta">OKR-Set Entwurf</div>
-        <div class="dc-field">Objective</div>
-        <div class="dc-text underlined">12 Fachverfahren bis Q3 in die Cloud migrieren.</div>
+        <div class="dc-meta">Objective</div>
+        <div class="dc-text">12 Fachverfahren bis Q3 in die Cloud migrieren.</div>
         <div class="dc-ann">
           <span class="dc-pill red">Kein Objective</span>
           <span class="dc-note">Das beschreibt eine Lieferung, keinen Zielzustand.</span>
@@ -207,9 +205,8 @@
       </div>
       <!-- Doc 2: bad KR -->
       <div class="doc-card">
-        <div class="dc-meta">OKR-Set Entwurf</div>
-        <div class="dc-field">Key Result 1</div>
-        <div class="dc-text underlined">Monatlich 3 Workshops zum Thema Cloud durchführen.</div>
+        <div class="dc-meta">Key Result 1</div>
+        <div class="dc-text">Monatlich 3 Workshops zum Thema Cloud durchführen.</div>
         <div class="dc-ann">
           <span class="dc-pill red">Maßnahme</span>
           <span class="dc-note">Beschreibt eine Aktivität, kein Ergebnis.</span>
@@ -218,9 +215,10 @@
       <!-- Doc 3: better version -->
       <div class="doc-card">
         <div class="dc-meta">Vorschlag</div>
-        <div class="dc-better">Fachverfahren laufen stabil, sicher und für Teams spürbar einfacher in der Cloud.</div>
-        <div class="dc-ann" style="margin-top:10px;">
-          <span class="dc-pill grn">✓ Zielzustand</span>
+        <div class="dc-better">Fachverfahren laufen <span class="dc-swipe">stabil, sicher und für Teams spürbar einfacher</span> in der Cloud.</div>
+        <div class="dc-ann">
+          <span class="dc-pill grn">✓ Objective</span>
+          <span class="dc-note">Beschreibt einen Zielzustand am Quartalsende.</span>
         </div>
       </div>
     </div>

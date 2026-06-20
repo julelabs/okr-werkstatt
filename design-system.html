@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Design System — OKRKritikBot 3000</title>
+<link rel="stylesheet" href="shared/tokens.css" />
+<style>
+  body { background: #EDEEF5; --r-card: 6px; --r-panel: 10px; }
+  .wrap { width: min(1160px, 92vw); margin-inline: auto; }
+
+  /* ── DS META NAV ── */
+  .ds-bar {
+    position: sticky; top: 0; z-index: 60;
+    background: var(--dunkel); color: #fff;
+    display: flex; align-items: center; gap: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .ds-bar .sys-label {
+    font-family: var(--display); font-weight: 800; font-size: 12px;
+    color: rgba(255,255,255,0.4); padding: 0 20px 0 clamp(16px,3vw,32px);
+    white-space: nowrap; letter-spacing: 0.01em;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  .ds-bar .sys-label strong { color: #fff; }
+  .ds-bar nav { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+  .ds-bar nav a {
+    font-family: var(--display); font-weight: 600; font-size: 12.5px;
+    color: rgba(255,255,255,0.5); text-decoration: none;
+    padding: 15px 14px; white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color .18s, border-color .18s;
+  }
+  .ds-bar nav a:hover { color: #fff; }
+
+  /* ── SECTION STRUCTURE ── */
+  .ds-sec { padding: 60px 0; border-bottom: 1px solid rgba(54,52,157,0.1); }
+  .ds-sec:last-child { border-bottom: none; padding-bottom: 80px; }
+  .sec-head { margin-bottom: 32px; }
+  .sec-num { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blau); opacity: 0.5; margin-bottom: 5px; }
+  .sec-title { font-family: var(--display); font-weight: 800; font-size: 1.55rem; letter-spacing: -0.025em; color: var(--dunkel); }
+  .sec-sub { font-size: 14.5px; color: var(--fg-2); line-height: 1.6; max-width: 64ch; margin-top: 7px; }
+
+  /* ── CANVAS ── */
+  .canvas { background: #fff; border-radius: var(--r-panel); padding: clamp(20px,3.5vw,36px); border: 1px solid rgba(54,52,157,0.08); }
+  .canvas + .canvas { margin-top: 12px; }
+  .canvas.lav { background: var(--lavendel); }
+  .canvas-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-start; }
+  .canvas-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 680px) { .canvas-2col { grid-template-columns: 1fr; } }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 18px; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background: rgba(54,52,157,0.1); }
+  .divider span { font-family: var(--display); font-weight: 700; font-size: 10.5px; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.07em; white-space: nowrap; }
+  .note { font-family: var(--display); font-size: 12.5px; color: var(--fg-muted); line-height: 1.55; margin-top: 12px; }
+  .note b { color: var(--fg-2); }
+
+  /* ── COLORS ── */
+  .swatches { display: flex; gap: 14px; flex-wrap: wrap; }
+  .swatch { width: 108px; }
+  .swatch .blob { height: 58px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.07); margin-bottom: 9px; }
+  .swatch .name { font-family: var(--display); font-weight: 700; font-size: 12px; color: var(--dunkel); }
+  .swatch .hex { font-family: monospace; font-size: 11px; color: var(--fg-muted); margin-top: 1px; }
+  .swatch .role { font-size: 11px; color: var(--fg-muted); line-height: 1.35; margin-top: 3px; }
+
+  /* ── NAV DEMO ── */
+  .nav-demo {
+    background: rgba(255,255,255,0.93); backdrop-filter: blur(14px);
+    border-radius: var(--r-panel); border: 1px solid rgba(54,52,157,0.1);
+    padding: 12px 22px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-demo .brand { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--blau); line-height: 1.25; }
+  .nav-demo .links { display: flex; align-items: center; gap: 3px; }
+  .nav-demo .links a { font-family: var(--display); font-weight: 600; font-size: 13.5px; text-decoration: none; color: rgba(13,12,43,0.55); padding: 7px 11px; border-radius: 6px; }
+  .nav-demo .links a.act { color: var(--blau); font-weight: 700; }
+  .nav-demo .links a.cta-btn { background: var(--minze); color: var(--dunkel); font-weight: 700; margin-left: 6px; }
+
+  /* ── SUBPAGE HERO ── */
+  .sub-hero-demo { background: var(--lavendel); border-radius: var(--r-panel); padding: 32px 36px 28px; }
+  .sub-hero-demo .kicker { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(54,52,157,0.5); margin-bottom: 10px; }
+  .sub-hero-demo h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--dunkel); line-height: 1.05; }
+  .sub-hero-demo p { font-size: 1.05rem; color: var(--fg-2); line-height: 1.6; margin-top: 12px; max-width: 52ch; }
+
+  /* ── CHIPS ── */
+  .chip { font-family: var(--display); font-weight: 700; font-size: 11.5px; padding: 4px 11px; border-radius: 999px; white-space: nowrap; display: inline-flex; align-items: center; }
+  .chip.crit { color: var(--kirsche); background: rgba(219,0,69,0.09); border: 1px solid rgba(219,0,69,0.22); }
+  .chip.pos  { color: #0a6640; background: rgba(77,255,176,0.26); border: 1px solid rgba(77,255,176,0.6); }
+  .chip.neu  { color: var(--fg-2); background: var(--lavendel); border: 1px solid rgba(54,52,157,0.18); }
+
+  /* ── DOC CARD ── */
+  .doc-card { background: #fff; border-radius: var(--r-card); box-shadow: 0 8px 28px rgba(54,52,157,0.11), 0 1px 4px rgba(54,52,157,0.06); padding: 20px 22px; font-family: var(--body); max-width: 320px; }
+  .dc-meta  { font-family: var(--display); font-weight: 700; font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(54,52,157,0.38); margin-bottom: 9px; }
+  .dc-field { font-family: var(--display); font-weight: 800; font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: #c0bdd8; margin-bottom: 6px; }
+  .dc-text  { font-size: 15px; line-height: 1.48; color: var(--dunkel); }
+  .dc-text.ul { text-decoration: underline; text-decoration-color: var(--kirsche); text-decoration-thickness: 2px; }
+  .dc-ann   { display: flex; align-items: flex-start; gap: 8px; margin-top: 11px; }
+  .dc-note  { font-size: 12.5px; color: var(--fg-muted); line-height: 1.4; }
+  .dc-better { font-size: 14.5px; color: var(--dunkel); line-height: 1.5; border-left: 3px solid var(--minze); padding-left: 12px; margin-top: 8px; }
+
+  /* ── FEEDBACK PANEL ── */
+  .fp { background: #fff; border-radius: var(--r-card); border-left: 4px solid var(--kirsche); padding: 15px 17px; box-shadow: 0 2px 10px rgba(54,52,157,0.07); max-width: 340px; }
+  .fp.pos  { border-left-color: var(--minze); }
+  .fp.info { border-left-color: var(--blau); }
+  .fp-lbl  { font-family: var(--display); font-weight: 800; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--kirsche); margin-bottom: 7px; }
+  .fp.pos  .fp-lbl { color: #0a6640; }
+  .fp.info .fp-lbl { color: var(--blau); }
+  .fp-txt  { font-size: 13.5px; color: var(--fg-2); line-height: 1.55; }
+
+  /* ── MODULE CARD ── */
+  .mod-card { background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-panel); padding: 24px 22px; max-width: 300px; cursor: pointer; transition: all .2s; }
+  .mod-card:hover { border-color: var(--blau-40); box-shadow: 0 14px 36px rgba(54,52,157,0.12); transform: translateY(-3px); }
+  .mc-badge { display: inline-flex; font-family: var(--display); font-weight: 700; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 11px; border-radius: 999px; margin-bottom: 13px; }
+  .mc-badge.lern { background: var(--blau); color: #fff; }
+  .mc-badge.quiz { background: var(--minze); color: var(--dunkel); }
+  .mc-badge.tool { background: var(--lavendel); color: var(--blau); }
+  .mod-card h3 { font-size: 1.12rem; font-weight: 800; letter-spacing: -0.02em; color: var(--dunkel); line-height: 1.12; }
+  .mod-card p  { font-size: 13.5px; color: var(--fg-2); line-height: 1.5; margin-top: 9px; }
+  .mc-cta { margin-top: 16px; font-family: var(--display); font-weight: 800; font-size: 13px; color: var(--blau); display: flex; align-items: center; gap: 7px; }
+
+  /* ── TOOL ROW ── */
+  .tool-list { border-top: 1px solid var(--line); }
+  .tool-row { display: grid; grid-template-columns: 34px 1fr auto 22px; gap: 18px; align-items: center; padding: 18px 8px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; transition: background .2s, padding-left .2s; border-radius: 6px; }
+  .tool-row:hover { background: var(--blau-10); padding-left: 16px; }
+  .tool-row .t-idx { font-family: var(--display); font-weight: 800; font-size: 13px; color: var(--blau); }
+  .tool-row h4 { font-size: 1rem; font-weight: 700; color: var(--dunkel); letter-spacing: -0.015em; }
+  .tool-row p  { font-size: 13px; color: var(--fg-muted); margin-top: 3px; max-width: 52ch; }
+  .tool-row .t-kind { font-family: var(--display); font-weight: 700; font-size: 11px; color: var(--fg-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .tool-row .t-go { font-family: var(--display); font-weight: 800; font-size: 1.2rem; color: var(--fg-muted); letter-spacing: -0.06em; transition: color .2s, transform .2s; }
+  .tool-row:hover .t-go { color: var(--blau); transform: translateX(4px); }
+
+  /* ── QUIZ ── */
+  .q-card { background: #fff; border-radius: var(--r-panel); padding: 28px; border: 1px solid var(--line); box-shadow: 0 4px 18px rgba(54,52,157,0.08); max-width: 560px; }
+  .q-ctx  { font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: 12px; }
+  .q-stmt { font-family: var(--display); font-weight: 800; font-size: 1.28rem; letter-spacing: -0.02em; line-height: 1.3; color: var(--dunkel); }
+  .q-opts { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 20px; }
+  .qopt   { font-family: var(--display); font-weight: 700; font-size: 13.5px; padding: 14px 10px; border-radius: var(--r-card); border: 1.5px solid var(--line); background: var(--lavendel); color: var(--dunkel); text-align: center; cursor: pointer; transition: all .18s; }
+  .qopt:hover    { border-color: var(--blau-40); background: var(--blau-10); }
+  .qopt.selected { border-color: var(--blau); background: var(--blau-10); color: var(--blau); }
+  .qopt.correct  { background: rgba(77,255,176,0.25); border-color: rgba(77,255,176,0.7); color: #0a6640; }
+  .qopt.wrong    { background: rgba(219,0,69,0.08); border-color: rgba(219,0,69,0.35); color: var(--kirsche); }
+  .q-feedback { margin-top: 14px; border-radius: var(--r-card); padding: 13px 15px; }
+  .q-feedback.ok  { background: rgba(77,255,176,0.14); border-left: 3px solid var(--minze); }
+  .q-feedback.err { background: rgba(219,0,69,0.07); border-left: 3px solid var(--kirsche); }
+  .qf-lbl { font-family: var(--display); font-weight: 800; font-size: 10.5px; color: #0a6640; margin-bottom: 5px; }
+  .q-feedback.err .qf-lbl { color: var(--kirsche); }
+  .qf-txt { font-size: 13.5px; color: var(--fg-2); line-height: 1.5; }
+
+  /* ── BUTTONS ── */
+  .btn { font-family: var(--display); font-weight: 700; font-size: 15px; cursor: pointer; border: none; border-radius: 8px; padding: 13px 22px; text-decoration: none; display: inline-flex; align-items: center; gap: 9px; transition: transform .15s, filter .2s; }
+  .btn:active { transform: scale(0.97); }
+  .btn-mint    { background: var(--minze); color: var(--dunkel); }
+  .btn-mint:hover { filter: brightness(1.07); }
+  .btn-outline { background: transparent; color: var(--blau); border: 1.5px solid rgba(54,52,157,0.28); }
+  .btn-outline:hover { background: rgba(54,52,157,0.06); }
+  .btn-blau    { background: var(--blau); color: #fff; }
+  .btn-blau:hover { filter: brightness(1.1); }
+
+  /* ── CTA BLOCK ── */
+  .cta-block { background: var(--lavendel); border-radius: var(--r-panel); padding: clamp(28px,4vw,48px); }
+  .cta-block h2 { font-size: clamp(1.5rem,2.8vw,2.1rem); font-weight: 800; letter-spacing: -0.025em; color: var(--dunkel); max-width: 26ch; }
+  .cta-block .cta-sub { font-size: 15px; color: var(--fg-2); line-height: 1.6; max-width: 48ch; margin-top: 10px; }
+  .cta-block .btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+
+  /* ── EMPTY / LOADING ── */
+  .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; gap: 13px; text-align: center; }
+  .empty-icon  { width: 48px; height: 48px; border-radius: var(--r-card); background: var(--lavendel); display: grid; place-items: center; }
+  .empty-state h4 { font-family: var(--display); font-weight: 700; font-size: 1rem; color: var(--dunkel); }
+  .empty-state p  { font-size: 13.5px; color: var(--fg-muted); max-width: 30ch; line-height: 1.5; }
+  .skel { border-radius: 5px; background: linear-gradient(90deg, var(--lavendel) 25%, #d4d8ee 50%, var(--lavendel) 75%); background-size: 200% 100%; animation: sh 1.6s infinite; }
+  @keyframes sh { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ── INPUT ── */
+  .input-label { font-family: var(--display); font-weight: 700; font-size: 12px; color: var(--fg-2); letter-spacing: 0.02em; display: block; margin-bottom: 6px; }
+  .input-field { font-family: var(--body); font-size: 15px; color: var(--dunkel); background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-card); padding: 13px 16px; width: 100%; outline: none; transition: border-color .2s; resize: vertical; line-height: 1.55; }
+  .input-field:focus { border-color: var(--blau); }
+
+  /* ── PAGE THUMBNAILS ── */
+  .page-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 760px) { .page-grid { grid-template-columns: 1fr; } }
+  .page-thumb { background: #fff; border-radius: var(--r-card); overflow: hidden; border: 1px solid rgba(54,52,157,0.1); box-shadow: 0 6px 24px rgba(54,52,157,0.1); }
+  .thumb-meta { padding: 14px 18px 13px; border-bottom: 1px solid rgba(54,52,157,0.07); }
+  .thumb-meta h3 { font-family: var(--display); font-weight: 800; font-size: 14px; color: var(--dunkel); }
+  .thumb-meta p  { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+  .artboard-frame { position: relative; overflow: hidden; }
+  .artboard { width: 1160px; transform-origin: top left; background: var(--lavendel); }
+
+  /* ── PAGE HEADER HERO ── */
+  header.main-hero {
+    background: var(--dunkel);
+    padding: 72px 0 64px;
+    color: #fff;
+  }
+  .hero-tag { font-family: var(--display); font-weight: 800; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--minze); margin-bottom: 14px; }
+  header.main-hero h1 { font-size: clamp(2.4rem,5vw,3.8rem); font-weight: 800; letter-spacing: -0.04em; line-height: 0.97; }
+  header.main-hero p  { font-size: 1.1rem; color: rgba(255,255,255,0.62); margin-top: 16px; max-width: 58ch; line-height: 1.6; }
+
+  /* ── PROGRESS ── */
+  .prog-bar { height: 3px; background: rgba(54,52,157,0.12); border-radius: 999px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--blau); border-radius: 999px; }
+</style>
+</head>
+<body>
+
+<!-- DS META NAV -->
+<div class="ds-bar">
+  <div class="sys-label"><strong>OKRKritikBot 3000</strong> · Design System</div>
+  <nav>
+    <a href="#tokens">Farben</a>
+    <a href="#nav">Navigation</a>
+    <a href="#chips">Chips</a>
+    <a href="#cards">Cards</a>
+    <a href="#modules">Module</a>
+    <a href="#quiz-sec">Quiz</a>
+    <a href="#cta-sec">CTA</a>
+    <a href="#states">States</a>
+    <a href="#pages">Seiten</a>
+  </nav>
+</div>
+
+<!-- HEADER -->
+<header class="main-hero">
+  <div class="wrap">
+    <div class="hero-tag">Design System</div>
+    <h1>OKRKritikBot 3000</h1>
+    <p>Komponenten, Tokens und Seitenarchitektur. Basis: die Startseite. Ziel: alle Seiten fühlen sich wie ein System an — gleicher Container, gleiche Nav, gleiche Farbsprache.</p>
+  </div>
+</header>
+
+<main>
+
+<!-- ── 01 FARBEN ── -->
+<section class="ds-sec" id="tokens">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">01 — Farben &amp; Tokens</div>
+      <h2 class="sec-title">Vier Farben. Klare Rollen.</h2>
+      <p class="sec-sub">Keine neuen Töne einführen. Minze = Belohnung/Aktion. Kirsche = Kritik/Problem. Blau = Struktur. Lavendelgrau = ruhige Fläche.</p>
+    </div>
+    <div class="canvas">
+      <div class="swatches">
+        <div class="swatch">
+          <div class="blob" style="background:#36349D;"></div>
+          <div class="name">Kosmisches Blau</div>
+          <div class="hex">#36349D</div>
+          <div class="role">Nav, Headings, Struktur, Vertrauen</div>
+        </div>
+        <div class="swatch">
+          <div class="blob" style="background:#4DFFB0;"></div>
+          <div class="name">Minze</div>
+          <div class="hex">#4DFFB0</div>
+          <div class="role">Primär-CTA, Erfolg, Zielzustand, Vorschlag</div>
+        </div>
+        <div class="swatch">
+          <div class="blob" style="background:#DB0045;"></div>
+          <div class="name">Kirsche</div>
+          <div class="hex">#DB0045</div>
+          <div class="role">Kritik-Chips, Unterstreichung, Fehler</div>
+        </div>
+        <div class="swatch">
+          <div class="blob" style="background:#E3E6F2;"></div>
+          <div class="name">Lavendelgrau</div>
+          <div class="hex">#E3E6F2</div>
+          <div class="role">Seiten-BG, Hero-BG, neutrale Flächen, Buttons neutral</div>
+        </div>
+        <div class="swatch">
+          <div class="blob" style="background:#0D0C2B;"></div>
+          <div class="name">Dunkel</div>
+          <div class="hex">#0D0C2B</div>
+          <div class="role">Headlines, Fliesstext, CTA-Tinte auf Minze</div>
+        </div>
+        <div class="swatch">
+          <div class="blob" style="background:#fff; border-color: rgba(54,52,157,0.15) !important;"></div>
+          <div class="name">Weiß</div>
+          <div class="hex">#FFFFFF</div>
+          <div class="role">Cards, Panels, Formulare, Nav-BG</div>
+        </div>
+      </div>
+    </div>
+    <p class="note"><b>Wichtig:</b> Minze nie als dominante Seitenfläche. Nur als Akzent: CTA-Button, positiver Chip, Vorschlag-Balken, Erfolg-Badge. Kirsche nur für echte Fehler — nicht dekorativ.</p>
+  </div>
+</section>
+
+<!-- ── 02 NAVIGATION ── -->
+<section class="ds-sec" id="nav">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">02 — Navigation &amp; Subpage-Hero</div>
+      <h2 class="sec-title">Einheitliche Topbar auf allen Seiten.</h2>
+      <p class="sec-sub">Weiß-Glas, kein dunkles Nav mehr. Gleicher Max-Width-Container (1160px) überall. Aktive Seite: Linkfarbe Blau.</p>
+    </div>
+    <div class="canvas lav" style="padding: 20px;">
+      <div class="nav-demo">
+        <div class="brand">Ziel- und<br>Wirkungssteuerung</div>
+        <div class="links">
+          <a href="#" class="act">Bot</a>
+          <a href="#">Werkzeugkoffer</a>
+          <a href="#">Lernpfad</a>
+          <a href="#">Quiz</a>
+          <a href="#" class="cta-btn">Bot öffnen ›</a>
+        </div>
+      </div>
+    </div>
+    <p class="note"><b>BG:</b> <code>rgba(255,255,255,0.92)</code> + <code>backdrop-filter: blur(14px)</code>. <b>Sticky</b> top:0. <b>CTA-Button:</b> immer Minze. <b>Aktive Seite:</b> Link in Kosmisches Blau, kein Underline.</p>
+
+    <div class="divider"><span>Unterseiten-Hero</span></div>
+    <div class="canvas" style="padding:0; overflow:hidden; border-radius:var(--r-panel);">
+      <div class="sub-hero-demo" style="border-radius:0;">
+        <div class="kicker">01 — Der Kritiker</div>
+        <h2>Lass deine OKR-Sets<br>auseinandernehmen.</h2>
+        <p>Der OKRKritikBot gibt dir strukturiertes Feedback — Zustand, Messbarkeit, Klarheit. Ohne Beratersprech.</p>
+      </div>
+    </div>
+    <p class="note"><b>Subpage-Hero:</b> Lavendelgrau-BG, kein floating card stack. Kicker-Label oben (Nummernformat „01 — Name"), große Headline, optionale Kurzbeschreibung. Max-width 1160px.</p>
+  </div>
+</section>
+
+<!-- ── 03 CHIPS ── -->
+<section class="ds-sec" id="chips">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">03 — Feedback-Chips</div>
+      <h2 class="sec-title">Kleine Labels, klare Einordnung.</h2>
+      <p class="sec-sub">Chips klassifizieren OKR-Elemente sofort. Zwei Kategorien: Kritik (Kirsche) und positiv (Minze). Neutral für Meta-Labels.</p>
+    </div>
+    <div class="canvas">
+      <div class="divider"><span>Kritik-Chips — Kirsche</span></div>
+      <div class="canvas-row">
+        <span class="chip crit">Kein Objective</span>
+        <span class="chip crit">Maßnahme</span>
+        <span class="chip crit">Unmessbar</span>
+        <span class="chip crit">Zu vage</span>
+        <span class="chip crit">Output, kein Outcome</span>
+        <span class="chip crit">Doppelung</span>
+      </div>
+      <div class="divider"><span>Positiv-Chips — Minze</span></div>
+      <div class="canvas-row">
+        <span class="chip pos">✓ Zielzustand</span>
+        <span class="chip pos">✓ Messbar</span>
+        <span class="chip pos">✓ Klarer</span>
+        <span class="chip pos">✓ Besser so</span>
+        <span class="chip pos">✓ Outcome</span>
+      </div>
+      <div class="divider"><span>Neutral / Meta</span></div>
+      <div class="canvas-row">
+        <span class="chip neu">OKR-Set Entwurf</span>
+        <span class="chip neu">Vorschlag</span>
+        <span class="chip neu">Objective</span>
+        <span class="chip neu">Key Result</span>
+        <span class="chip neu">Folgt</span>
+      </div>
+    </div>
+    <p class="note"><b>Größe:</b> 11.5px, padding 4px 11px. <b>Kirsche-Chips:</b> immer nur für echte OKR-Qualitätsprobleme. <b>Minze-Chips:</b> immer für Verbesserung und Zielzustand. Label kurz und direkt — kein ganzer Satz.</p>
+  </div>
+</section>
+
+<!-- ── 04 CARDS ── -->
+<section class="ds-sec" id="cards">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">04 — Dokument-Cards &amp; Feedback-Panels</div>
+      <h2 class="sec-title">Das annotierte OKR-Snippet.</h2>
+      <p class="sec-sub">Cards zeigen Entwurf + Kritik + Vorschlag. Panels kommentieren im Randnotiz-Stil. Weißer Untergrund, leichter Schatten, kein dunkler Hintergrund.</p>
+    </div>
+    <div class="canvas">
+      <div class="canvas-row">
+        <div class="doc-card">
+          <div class="dc-meta">OKR-Set Entwurf</div>
+          <div class="dc-field">Objective</div>
+          <div class="dc-text ul">12 Fachverfahren bis Q3 in die Cloud migrieren.</div>
+          <div class="dc-ann">
+            <span class="chip crit" style="font-size:10.5px;padding:3px 10px;">Kein Objective</span>
+            <span class="dc-note">Lieferung, kein Zielzustand.</span>
+          </div>
+        </div>
+        <div class="doc-card">
+          <div class="dc-meta">OKR-Set Entwurf</div>
+          <div class="dc-field">Key Result 1</div>
+          <div class="dc-text ul">Monatlich 3 Workshops zum Thema Cloud durchführen.</div>
+          <div class="dc-ann">
+            <span class="chip crit" style="font-size:10.5px;padding:3px 10px;">Maßnahme</span>
+            <span class="dc-note">Aktivität, kein Ergebnis.</span>
+          </div>
+        </div>
+        <div class="doc-card">
+          <div class="dc-meta">Vorschlag</div>
+          <div class="dc-better">Fachverfahren laufen stabil, sicher und für Teams spürbar einfacher in der Cloud.</div>
+          <div class="dc-ann" style="margin-top:10px;">
+            <span class="chip pos" style="font-size:10.5px;padding:3px 10px;">✓ Zielzustand</span>
+          </div>
+        </div>
+      </div>
+      <div class="divider"><span>Feedback-Panels</span></div>
+      <div class="canvas-row">
+        <div class="fp">
+          <div class="fp-lbl">Problem</div>
+          <div class="fp-txt">Das ist eine Maßnahme, kein Key Result. Key Results beschreiben den messbaren Zustand am Quartalsende.</div>
+        </div>
+        <div class="fp pos">
+          <div class="fp-lbl">Verbesserung</div>
+          <div class="fp-txt">Dieser Vorschlag beschreibt einen beobachtbaren Zielzustand. Prüfe noch, ob er am Quartalsende eindeutig messbar ist.</div>
+        </div>
+        <div class="fp info">
+          <div class="fp-lbl">Hinweis</div>
+          <div class="fp-txt">Ein OKR-Set besteht typischerweise aus 1 Objective und 2–4 Key Results.</div>
+        </div>
+      </div>
+    </div>
+    <p class="note"><b>Card-Struktur:</b> DC-Meta (Label) → DC-Field (Element-Typ) → DC-Text (ggf. Kirsche-Unterstreichung) → DC-Ann (Chip + Notiz). <b>Vorschlag-Cards:</b> Minze-Balken links statt Chip oben. <b>Panels:</b> linker Farbbalken = semantische Farbe.</p>
+  </div>
+</section>
+
+<!-- ── 05 MODULE & TOOLS ── -->
+<section class="ds-sec" id="modules">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">05 — Modul-Cards &amp; Werkzeug-Zeilen</div>
+      <h2 class="sec-title">Für Lernpfad und Werkzeugkoffer.</h2>
+      <p class="sec-sub">Modul-Cards: vertikale Kacheln mit Badge und Hover-Lift. Werkzeug-Zeilen: horizontal, tabellenartig mit Index-Nummer.</p>
+    </div>
+    <div class="canvas">
+      <div class="canvas-row">
+        <div class="mod-card">
+          <span class="mc-badge lern">Lernpfad</span>
+          <h3>Vom vagen Vorsatz zum echten OKR-Set</h3>
+          <p>Zwei Szenarien, acht Pfade. Du wählst Problem, Schritt und Hebel.</p>
+          <div class="mc-cta">Starten <span class="chev">›</span></div>
+        </div>
+        <div class="mod-card">
+          <span class="mc-badge quiz">Quiz</span>
+          <h3>Objective, Key Result oder keins von beidem?</h3>
+          <p>Zehn Sätze aus dem Verwaltungsalltag. Du entscheidest, der Bot bewertet.</p>
+          <div class="mc-cta">Spielen <span class="chev">›</span></div>
+        </div>
+        <div class="mod-card">
+          <span class="mc-badge tool">Werkzeug</span>
+          <h3>Handreichung: OKR-Sets formulieren</h3>
+          <p>Von guten Vorsätzen zum ersten Objective — mit Beispielen und Mini-Checks.</p>
+          <div class="mc-cta">Herunterladen <span class="chev">›</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="canvas" style="margin-top:12px; padding: 6px 16px;">
+      <div class="tool-list">
+        <a class="tool-row" href="#">
+          <span class="t-idx">01</span>
+          <div><h4>Handreichung: OKR-Sets formulieren</h4><p>Von guten Vorsätzen zum ersten Objective — mit Beispielen und Mini-Checks.</p></div>
+          <span class="t-kind">PDF · 4 Seiten</span>
+          <span class="t-go">›</span>
+        </a>
+        <a class="tool-row" href="#">
+          <span class="t-idx">02</span>
+          <div><h4>Tracking-Tabelle <span style="background:var(--minze);color:var(--dunkel);font-size:9.5px;padding:2px 8px;border-radius:999px;font-weight:700;margin-left:6px;">Folgt</span></h4><p>Excel-Vorlage für Confidence, Fortschritt und Check-in-Status.</p></div>
+          <span class="t-kind">Excel</span>
+          <span class="t-go">›</span>
+        </a>
+      </div>
+    </div>
+    <p class="note"><b>Modul-Cards:</b> Weiß, Border 1.5px, Hover-Lift translateY(-3px). Badge-Farbe = Kategorie. <b>Werkzeug-Zeilen:</b> Grid 4 Spalten, Hover: BG var(--blau-10) + padding-left shift.</p>
+  </div>
+</section>
+
+<!-- ── 06 QUIZ ── -->
+<section class="ds-sec" id="quiz-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">06 — Quiz-Karte &amp; Antwortzustände</div>
+      <h2 class="sec-title">Helle Karte, konsistent mit dem System.</h2>
+      <p class="sec-sub">Weiße Karte auf Lavendelgrau. Vier Antwortzustände: neutral, ausgewählt, richtig, falsch.</p>
+    </div>
+    <div class="canvas lav" style="display:flex; justify-content:center; padding: 32px;">
+      <div class="q-card" style="width:100%; max-width:520px;">
+        <div class="q-ctx">Frage 4 von 10 · 3 richtig</div>
+        <div class="q-stmt">„Wir führen monatlich zwei Team-Retrospektiven durch."</div>
+        <div class="q-opts">
+          <div class="qopt">Objective</div>
+          <div class="qopt correct">Maßnahme ✓</div>
+          <div class="qopt">Key Result</div>
+        </div>
+        <div class="q-feedback ok">
+          <div class="qf-lbl">Richtig!</div>
+          <div class="qf-txt">Retrospektiven sind Aktivitäten, keine messbaren Zustände am Quartalsende.</div>
+        </div>
+      </div>
+    </div>
+    <div class="divider"><span>Alle vier Zustände</span></div>
+    <div class="canvas">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="qopt" style="flex:1; min-width:110px;">Neutral</div>
+        <div class="qopt selected" style="flex:1; min-width:110px;">Ausgewählt</div>
+        <div class="qopt correct" style="flex:1; min-width:110px;">Richtig ✓</div>
+        <div class="qopt wrong" style="flex:1; min-width:110px;">Falsch ✗</div>
+      </div>
+    </div>
+    <p class="note"><b>Neutral:</b> Lavendelgrau BG. <b>Ausgewählt:</b> Blau-10 BG, Blau-Border. <b>Richtig:</b> Minze-Tint, Grün-Text. <b>Falsch:</b> Kirsche-Tint, Kirsche-Text. <b>Die Quiz-Seite läuft auf genau diesem hellen System.</b></p>
+  </div>
+</section>
+
+<!-- ── 07 CTA ── -->
+<section class="ds-sec" id="cta-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">07 — CTA-Block &amp; Buttons</div>
+      <h2 class="sec-title">Drei Button-Varianten, ein Primär-CTA.</h2>
+      <p class="sec-sub">Minze ist immer die Primäraktion. Outline-Blau für die Alternative. Voll-Blau für externe Links.</p>
+    </div>
+    <div class="canvas">
+      <div class="cta-block">
+        <h2>Bereit? Dann los.</h2>
+        <p class="cta-sub">Füttere den Bot mit deinem OKR-Entwurf — du bekommst strukturiertes Feedback in Sekunden.</p>
+        <div class="btns">
+          <a href="#" class="btn btn-mint">Bot ausprobieren <span class="chev">›</span></a>
+          <a href="#" class="btn btn-outline">Erst den Lernpfad</a>
+        </div>
+      </div>
+    </div>
+    <div class="canvas" style="margin-top:12px;">
+      <div class="divider"><span>Button-Varianten</span></div>
+      <div class="canvas-row" style="margin-top:16px;">
+        <a href="#" class="btn btn-mint">Bot ausprobieren <span class="chev">›</span></a>
+        <a href="#" class="btn btn-outline">Erst den Lernpfad</a>
+        <a href="#" class="btn btn-blau">In ChatGPT öffnen <span class="chev">›</span></a>
+      </div>
+    </div>
+    <p class="note"><b>Primär:</b> Minze (immer Hauptaktion). <b>Sekundär:</b> Outline Blau (Alternative). <b>Tertiär:</b> Voll-Blau (externe Links). Keine weiteren Varianten.</p>
+  </div>
+</section>
+
+<!-- ── 08 STATES ── -->
+<section class="ds-sec" id="states">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">08 — Empty State, Loading &amp; Eingabe</div>
+      <h2 class="sec-title">Bot-Workspace: vor und während.</h2>
+      <p class="sec-sub">Empty State bevor der Nutzer etwas eingegeben hat. Skeleton-Loading während das Feedback generiert wird.</p>
+    </div>
+    <div class="canvas-2col">
+      <div class="canvas">
+        <p style="font-family:var(--display);font-size:11px;font-weight:700;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px;">Empty State</p>
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#36349D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.45">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <h4>Noch kein OKR-Set</h4>
+          <p>Füge dein Objective und Key Results ein — du bekommst sofort Feedback.</p>
+          <a href="#" class="btn btn-mint" style="font-size:14px;padding:11px 18px;">OKR einfügen</a>
+        </div>
+      </div>
+      <div class="canvas">
+        <p style="font-family:var(--display);font-size:11px;font-weight:700;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px;">Loading State</p>
+        <div style="display:flex;flex-direction:column;gap:11px;padding:4px 0;">
+          <div class="skel" style="height:10px;width:28%;"></div>
+          <div class="skel" style="height:15px;width:88%;"></div>
+          <div class="skel" style="height:15px;width:72%;"></div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <div class="skel" style="height:24px;width:88px;border-radius:999px;"></div>
+            <div class="skel" style="height:24px;width:150px;border-radius:6px;"></div>
+          </div>
+          <div style="border-top:1px solid var(--line);margin-top:6px;padding-top:12px;">
+            <div class="skel" style="height:10px;width:20%;margin-bottom:9px;"></div>
+            <div class="skel" style="height:13px;width:92%;margin-bottom:5px;"></div>
+            <div class="skel" style="height:13px;width:58%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="canvas" style="margin-top:12px; max-width:560px;">
+      <div class="divider"><span>Eingabefeld — Bot-Workspace</span></div>
+      <div style="margin-top:14px;">
+        <label class="input-label">Dein OKR-Set</label>
+        <textarea class="input-field" rows="4" placeholder="Objective: …&#10;Key Result 1: …&#10;Key Result 2: …"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+          <a href="#" class="btn btn-mint" style="font-size:14px;padding:11px 20px;">Feedback holen <span class="chev">›</span></a>
+        </div>
+      </div>
+    </div>
+    <p class="note"><b>Empty:</b> Zentriert, Icon in Lavendel-Box, klarer CTA. <b>Loading:</b> Skeleton mit gleicher Struktur wie späteres Feedback — kein Spinner, kein dunkler Overlay. <b>Input:</b> Weiß, Blau-Focus-Ring.</p>
+  </div>
+</section>
+
+<!-- ── 09 SEITENARCHITEKTUR ── -->
+<section class="ds-sec" id="pages">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">09 — Seitenarchitektur</div>
+      <h2 class="sec-title">So sieht das System auf jeder Seite aus.</h2>
+      <p class="sec-sub">Gleicher Container, gleiche Nav, unterschiedliche Inhaltsstruktur. Alle Seiten teilen denselben hellen Hintergrund und dieselbe Farbsprache.</p>
+    </div>
+
+    <div class="page-grid">
+
+      <!-- WERKZEUGKOFFER -->
+      <div class="page-thumb">
+        <div class="thumb-meta"><h3>Werkzeugkoffer</h3><p>Strukturierte Bibliothek mit Handreichungen und Vorlagen</p></div>
+        <div class="artboard-frame" id="frame-koffer">
+          <div class="artboard" id="ab-koffer">
+            <div style="background:#fff;border-bottom:1px solid rgba(54,52,157,0.1);padding:9px 22px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:var(--display);font-weight:700;font-size:10px;color:var(--blau);line-height:1.3;">Ziel- und<br>Wirkungssteuerung</span>
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span style="font-size:9px;color:var(--fg-muted);font-family:var(--display);">Bot</span>
+                <span style="font-size:9px;color:var(--blau);font-weight:700;font-family:var(--display);">Werkzeugkoffer</span>
+                <span style="background:var(--minze);color:var(--dunkel);font-family:var(--display);font-weight:700;font-size:9px;padding:4px 9px;border-radius:5px;">Bot öffnen ›</span>
+              </div>
+            </div>
+            <div style="background:var(--lavendel);padding:22px 22px 18px;">
+              <div style="font-family:var(--display);font-weight:800;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(54,52,157,0.5);margin-bottom:5px;">02 — Werkzeugkoffer</div>
+              <div style="font-family:var(--display);font-weight:800;font-size:17px;letter-spacing:-0.03em;color:var(--dunkel);line-height:1.05;">Alles für saubere<br>OKR-Sets.</div>
+              <div style="font-size:9px;color:var(--fg-2);margin-top:7px;line-height:1.5;">Handreichungen und Vorlagen für den OKR-Rollout — ohne Beratersprech.</div>
+            </div>
+            <div style="padding:12px 22px 18px;display:flex;flex-direction:column;gap:11px;">
+
+              <!-- Phase 1 -->
+              <div style="display:grid;grid-template-columns:118px 1fr;gap:14px;border-top:1.5px solid rgba(54,52,157,0.2);padding-top:11px;">
+                <div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:7.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--blau);margin-bottom:4px;">Phase 1</div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:11px;color:var(--dunkel);line-height:1.05;">Formulieren</div>
+                  <div style="font-size:8px;color:var(--fg-muted);margin-top:4px;line-height:1.4;">Vom vagen Vorsatz zum echten OKR-Set.</div>
+                  <div style="font-family:var(--display);font-weight:700;font-size:7.5px;color:rgba(54,52,157,0.45);margin-top:6px;">1 von 2 verfügbar</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div style="background:#fff;border:1.5px solid rgba(54,52,157,0.12);border-radius:6px;padding:9px 10px;display:flex;flex-direction:column;">
+                    <span style="align-self:flex-start;font-family:var(--display);font-weight:700;font-size:6.5px;letter-spacing:0.04em;text-transform:uppercase;color:var(--blau);background:rgba(54,52,157,0.09);border:1px solid rgba(54,52,157,0.2);padding:2px 6px;border-radius:999px;margin-bottom:7px;">PDF · 4 Seiten</span>
+                    <div style="font-family:var(--display);font-weight:800;font-size:9px;color:var(--dunkel);line-height:1.15;">Handreichung: OKR-Sets formulieren</div>
+                    <div style="font-size:7.5px;color:var(--fg-muted);margin-top:4px;line-height:1.4;">Von guten Vorsätzen zum ersten Objective.</div>
+                    <div style="margin-top:auto;padding-top:8px;font-family:var(--display);font-weight:800;font-size:8px;color:var(--blau);">Herunterladen ›</div>
+                  </div>
+                  <div style="background:#fff;border:1.5px solid rgba(54,52,157,0.12);border-radius:6px;padding:9px 10px;display:flex;flex-direction:column;opacity:0.66;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:5px;">
+                      <span style="font-family:var(--display);font-weight:700;font-size:6.5px;letter-spacing:0.04em;text-transform:uppercase;color:var(--blau);background:rgba(54,52,157,0.09);border:1px solid rgba(54,52,157,0.2);padding:2px 6px;border-radius:999px;">PDF · 1 Seite</span>
+                      <span style="font-family:var(--display);font-weight:700;font-size:6.5px;text-transform:uppercase;color:var(--dunkel);background:var(--minze);padding:2px 6px;border-radius:999px;">folgt</span>
+                    </div>
+                    <div style="font-family:var(--display);font-weight:800;font-size:9px;color:var(--dunkel);line-height:1.15;">OKR-Spickzettel</div>
+                    <div style="font-size:7.5px;color:var(--fg-muted);margin-top:4px;line-height:1.4;">Eine Seite für den Schreibtisch.</div>
+                    <div style="margin-top:auto;padding-top:8px;font-family:var(--display);font-weight:800;font-size:8px;color:var(--fg-muted);">In Vorbereitung</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phase 2 -->
+              <div style="display:grid;grid-template-columns:118px 1fr;gap:14px;border-top:1px solid var(--line);padding-top:11px;">
+                <div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:7.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--blau);margin-bottom:4px;">Phase 2</div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:11px;color:var(--dunkel);line-height:1.05;">Tracken &amp; Steuern</div>
+                  <div style="font-size:8px;color:var(--fg-muted);margin-top:4px;line-height:1.4;">Fortschritt sichtbar machen — über das Quartal.</div>
+                  <div style="font-family:var(--display);font-weight:700;font-size:7.5px;color:rgba(54,52,157,0.45);margin-top:6px;">1 von 1 verfügbar</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div style="background:#fff;border:1.5px solid rgba(54,52,157,0.12);border-radius:6px;padding:9px 10px;display:flex;flex-direction:column;">
+                    <span style="align-self:flex-start;font-family:var(--display);font-weight:700;font-size:6.5px;letter-spacing:0.04em;text-transform:uppercase;color:#0a6640;background:rgba(77,255,176,0.22);border:1px solid rgba(77,255,176,0.55);padding:2px 6px;border-radius:999px;margin-bottom:7px;">Excel · Vorlage</span>
+                    <div style="font-family:var(--display);font-weight:800;font-size:9px;color:var(--dunkel);line-height:1.15;">Tracking-Tabelle</div>
+                    <div style="font-size:7.5px;color:var(--fg-muted);margin-top:4px;line-height:1.4;">Confidence, Fortschritt und Check-in-Status.</div>
+                    <div style="margin-top:auto;padding-top:8px;font-family:var(--display);font-weight:800;font-size:8px;color:var(--blau);">Herunterladen ›</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phase 3 -->
+              <div style="display:grid;grid-template-columns:118px 1fr;gap:14px;border-top:1px solid var(--line);padding-top:11px;">
+                <div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:7.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--blau);margin-bottom:4px;">Phase 3</div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:11px;color:var(--dunkel);line-height:1.05;">Moderieren</div>
+                  <div style="font-size:8px;color:var(--fg-muted);margin-top:4px;line-height:1.4;">Aus Status-Runden echte Steuerung machen.</div>
+                  <div style="font-family:var(--display);font-weight:700;font-size:7.5px;color:rgba(54,52,157,0.45);margin-top:6px;">1 von 1 verfügbar</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <div style="background:#fff;border:1.5px solid rgba(54,52,157,0.12);border-radius:6px;padding:9px 10px;display:flex;flex-direction:column;">
+                    <span style="align-self:flex-start;font-family:var(--display);font-weight:700;font-size:6.5px;letter-spacing:0.04em;text-transform:uppercase;color:var(--blau);background:rgba(54,52,157,0.09);border:1px solid rgba(54,52,157,0.2);padding:2px 6px;border-radius:999px;margin-bottom:7px;">PDF · Leitfaden</span>
+                    <div style="font-family:var(--display);font-weight:800;font-size:9px;color:var(--dunkel);line-height:1.15;">Check-in-Moderationshilfe</div>
+                    <div style="font-size:7.5px;color:var(--fg-muted);margin-top:4px;line-height:1.4;">Ablauf, Leitfragen und Timeboxing.</div>
+                    <div style="margin-top:auto;padding-top:8px;font-family:var(--display);font-weight:800;font-size:8px;color:var(--blau);">Herunterladen ›</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LERNPFAD -->
+      <div class="page-thumb">
+        <div class="thumb-meta"><h3>Lernpfad</h3><p>Geführte Lernsequenz · Fortschrittsrail links · OKR-Builder rechts</p></div>
+        <div class="artboard-frame" id="frame-lern">
+          <div class="artboard" id="ab-lern">
+            <div style="background:#fff;border-bottom:1px solid rgba(54,52,157,0.1);padding:9px 22px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:var(--display);font-weight:700;font-size:10px;color:var(--blau);line-height:1.3;">Ziel- und<br>Wirkungssteuerung</span>
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span style="font-size:9px;color:var(--blau);font-weight:700;font-family:var(--display);">Lernpfad</span>
+                <span style="background:var(--minze);color:var(--dunkel);font-family:var(--display);font-weight:700;font-size:9px;padding:4px 9px;border-radius:5px;">Bot öffnen ›</span>
+              </div>
+            </div>
+            <div style="background:var(--lavendel);padding:18px 22px 14px;">
+              <div style="font-family:var(--display);font-weight:800;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(54,52,157,0.5);margin-bottom:5px;">03 — Lernpfad</div>
+              <div style="font-family:var(--display);font-weight:800;font-size:16px;letter-spacing:-0.03em;color:var(--dunkel);line-height:1.05;">Vom vagen Vorsatz<br>zum echten OKR-Set.</div>
+            </div>
+            <div style="padding:12px 22px;display:grid;grid-template-columns:110px 1fr 120px;gap:12px;">
+              <div>
+                <div style="font-family:var(--display);font-weight:800;font-size:7.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--blau);margin-bottom:7px;">Kapitel 1</div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;min-width:14px;border-radius:50%;background:var(--blau);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:6.5px;color:#fff;">1</div><span style="font-size:8.5px;color:var(--dunkel);font-weight:600;">Problem wählen</span></div>
+                  <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;min-width:14px;border-radius:50%;border:1.5px solid rgba(54,52,157,0.25);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:6.5px;color:var(--fg-muted);">2</div><span style="font-size:8.5px;color:var(--fg-muted);">3-Monats-Schritt</span></div>
+                  <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;min-width:14px;border-radius:50%;border:1.5px solid rgba(54,52,157,0.25);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:6.5px;color:var(--fg-muted);">3</div><span style="font-size:8.5px;color:var(--fg-muted);">Objective</span></div>
+                </div>
+              </div>
+              <div>
+                <div style="background:#fff;border-radius:9px;padding:12px;border:1px solid var(--line);">
+                  <div style="font-family:var(--display);font-weight:700;font-size:8px;color:var(--fg-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:7px;">Schritt 1 · Problem wählen</div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:11px;color:var(--dunkel);margin-bottom:8px;line-height:1.2;">Was ist eigentlich das Problem?</div>
+                  <div style="display:flex;flex-direction:column;gap:4px;">
+                    <div style="background:var(--lavendel);border-radius:6px;padding:7px 9px;font-size:8.5px;font-family:var(--body);">Mitarbeitende verstehen OKRs nicht.</div>
+                    <div style="background:var(--blau);border-radius:6px;padding:7px 9px;font-size:8.5px;color:#fff;font-family:var(--body);">Objectives beschreiben Aktivitäten statt Zustände.</div>
+                    <div style="background:var(--lavendel);border-radius:6px;padding:7px 9px;font-size:8.5px;font-family:var(--body);">Key Results sind nicht messbar.</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div style="font-family:var(--display);font-weight:800;font-size:7.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--blau);margin-bottom:7px;">Dein OKR-Set</div>
+                <div style="background:var(--lavendel);border-radius:8px;padding:9px;">
+                  <div style="font-family:var(--display);font-weight:700;font-size:7.5px;color:var(--fg-muted);margin-bottom:3px;">OBJECTIVE</div>
+                  <div style="font-size:8.5px;color:var(--fg-muted);font-style:italic;line-height:1.4;">Entsteht in Kapitel 1.</div>
+                  <div style="border-top:1px solid var(--line);margin:7px 0;"></div>
+                  <div style="font-family:var(--display);font-weight:700;font-size:7.5px;color:var(--fg-muted);margin-bottom:3px;">KEY RESULTS</div>
+                  <div style="font-size:8.5px;color:var(--fg-muted);font-style:italic;">Folgen in Kapitel 2.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="page-thumb">
+        <div class="thumb-meta"><h3>Quiz</h3><p>Heller Hintergrund · Fokussierte Fragekarte · Sofortfeedback</p></div>
+        <div class="artboard-frame" id="frame-quiz">
+          <div class="artboard" id="ab-quiz">
+            <div style="background:#fff;border-bottom:1px solid rgba(54,52,157,0.1);padding:9px 22px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-family:var(--display);font-weight:700;font-size:10px;color:var(--blau);line-height:1.3;">Ziel- und<br>Wirkungssteuerung</span>
+              <div style="display:flex;gap:5px;align-items:center;">
+                <span style="font-size:9px;color:var(--blau);font-weight:700;font-family:var(--display);">Quiz</span>
+                <span style="background:var(--minze);color:var(--dunkel);font-family:var(--display);font-weight:700;font-size:9px;padding:4px 9px;border-radius:5px;">Bot öffnen ›</span>
+              </div>
+            </div>
+            <div style="height:3px;background:var(--lavendel);"><div style="height:100%;width:40%;background:var(--minze);"></div></div>
+            <div style="background:var(--lavendel);padding:22px;display:flex;justify-content:center;">
+              <div style="width:100%;max-width:480px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+                  <span style="font-family:var(--display);font-weight:800;font-size:9.5px;color:var(--blau);">Frage 4 / 10</span>
+                  <span style="font-family:var(--display);font-weight:700;font-size:9.5px;color:var(--fg-muted);">3 richtig</span>
+                </div>
+                <div style="background:#fff;border-radius:11px;padding:18px 20px;border:1px solid var(--line);box-shadow:0 3px 14px rgba(54,52,157,0.08);">
+                  <div style="font-family:var(--display);font-weight:700;font-size:8px;text-transform:uppercase;letter-spacing:0.06em;color:var(--fg-muted);margin-bottom:9px;">Einordnen</div>
+                  <div style="font-family:var(--display);font-weight:800;font-size:12px;color:var(--dunkel);line-height:1.3;margin-bottom:14px;">„Wir führen monatlich zwei Team-Retrospektiven durch."</div>
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px;">
+                    <div style="background:var(--lavendel);border:1.5px solid var(--line);border-radius:7px;padding:9px 7px;text-align:center;font-family:var(--display);font-weight:700;font-size:9px;color:var(--dunkel);">Objective</div>
+                    <div style="background:rgba(77,255,176,0.22);border:1.5px solid rgba(77,255,176,0.6);border-radius:7px;padding:9px 7px;text-align:center;font-family:var(--display);font-weight:700;font-size:9px;color:#0a6640;">Maßnahme ✓</div>
+                    <div style="background:var(--lavendel);border:1.5px solid var(--line);border-radius:7px;padding:9px 7px;text-align:center;font-family:var(--display);font-weight:700;font-size:9px;color:var(--dunkel);">Key Result</div>
+                  </div>
+                  <div style="background:rgba(77,255,176,0.12);border-radius:7px;padding:9px 11px;border-left:3px solid var(--minze);">
+                    <div style="font-family:var(--display);font-weight:800;font-size:8px;color:#0a6640;margin-bottom:3px;">Richtig!</div>
+                    <div style="font-size:8.5px;color:var(--fg-2);line-height:1.4;">Retrospektiven sind Aktivitäten, keine messbaren Zustände am Quartalsende.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="background:var(--dunkel);color:#fff;padding:36px 0 44px;margin-top:0;">
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+    <div>
+      <div style="font-family:var(--display);font-weight:800;font-size:13.5px;">OKRKritikBot 3000 — Design System</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-top:5px;">Internes Referenzdokument · Stand Juni 2026</div>
+    </div>
+    <a href="index.html" style="font-family:var(--display);font-weight:700;font-size:13px;color:rgba(255,255,255,0.55);text-decoration:none;">← Zurück zur Startseite</a>
+  </div>
+</footer>
+
+<script>
+  function scaleBoards() {
+    [['frame-koffer','ab-koffer'],['frame-lern','ab-lern'],['frame-quiz','ab-quiz']].forEach(function(pair) {
+      var frame = document.getElementById(pair[0]);
+      var board = document.getElementById(pair[1]);
+      if (!frame || !board) return;
+      var scale = frame.offsetWidth / 1160;
+      board.style.transform = 'scale(' + scale + ')';
+      frame.style.height = (board.scrollHeight * scale) + 'px';
+    });
+  }
+  scaleBoards();
+  window.addEventListener('resize', scaleBoards);
+</script>
+
+</body>
+</html>
