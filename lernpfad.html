@@ -191,9 +191,8 @@
   .prob-pill { margin-top: 6px; font-size: 12px; color: var(--fg-2); line-height: 1.4; font-style: italic; padding: 8px 11px; background: rgba(255,255,255,0.75); border-radius: var(--r-card); border: 1px solid rgba(54,52,157,0.1); }
 
   /* ── FINAL ── */
-  .done-line { display: flex; align-items: center; gap: 9px; margin-top: 34px; font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--fg-2); }
-  .done-line .dcircle { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; background: var(--minze); display: grid; place-items: center; }
-  .done-line .dcircle svg { width: 10px; height: 10px; stroke: var(--dunkel); }
+  .done-line { display: inline-flex; align-items: center; gap: 7px; margin-top: 40px; font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #0a6640; }
+  .done-line svg { width: 12px; height: 12px; }
   .final-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
   .link-quiet { font-family: var(--display); font-weight: 700; font-size: 14px; color: var(--fg-muted); background: none; border: none; cursor: pointer; padding: 12px 6px; text-decoration: underline; text-underline-offset: 3px; }
   .link-quiet:hover { color: var(--blau); }
@@ -656,7 +655,7 @@ function rFinal() {
       <div class="rrow"><div class="rcircle">${CHECK_SVG}</div><div class="rtext">Jedes Key Result ist am Quartalsende eindeutig überprüfbar: erreicht oder nicht.</div></div>
       <div class="rrow"><div class="rcircle">${CHECK_SVG}</div><div class="rtext">Überprüfbar heißt nicht zwingend: mit Zahl.</div></div>
     </div>
-    <div class="done-line"><span class="dcircle">${CHECK_SVG}</span>Lernpfad abgeschlossen</div>
+    <div class="done-line">${CHECK_SVG} Lernpfad abgeschlossen</div>
     <div class="final-cta">
       <a class="btn btn-mint" href="https://chatgpt.com/g/g-696805cd1cf881918217c5ffe0626a2d-okrkritikbot3000" target="_blank" rel="noopener">OKRKritikBot fragen <span class="ch">↗</span></a>
       <a class="btn btn-ghost" href="quiz.html">Jetzt das Quiz <span class="ch">›</span></a>
