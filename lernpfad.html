@@ -135,14 +135,16 @@
   .kr-pair .plab { font-family: var(--display); font-weight: 800; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
   .kr-pair .pfrom .plab { color: var(--fg-muted); }
   .kr-pair .pfrom p { font-size: 13.5px; color: var(--fg-2); line-height: 1.5; margin: 0; }
-  .kr-pair .pto { margin-top: 12px; padding-left: 14px; border-left: 3px solid var(--minze); }
-  .kr-pair .pto .plab { color: #0a6640; }
+  .kr-pair .pto { margin-top: 12px; }
+  .kr-pair .pto .plab { color: #0a6640; display: inline-flex; align-items: center; gap: 6px; }
+  .kr-pair .pto .plab::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--minze); }
   .kr-pair .pto p { font-size: 14.5px; color: var(--fg); line-height: 1.55; margin: 0; }
 
   /* ── FINAL KR LIST + RECAP ── */
   .kr-list { display: flex; flex-direction: column; gap: 18px; margin-top: 20px; max-width: var(--colw); }
-  .kr-item { padding: 10px 0 10px 18px; border-left: 3px solid var(--blau); }
-  .kr-item .krlabel { font-family: var(--display); font-weight: 800; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--blau); margin-bottom: 5px; opacity: 0.7; }
+  .kr-item { padding: 10px 0; }
+  .kr-item .krlabel { font-family: var(--display); font-weight: 800; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--blau); margin-bottom: 5px; opacity: 0.7; display: inline-flex; align-items: center; gap: 6px; }
+  .kr-item .krlabel::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--blau); }
   .kr-item .krtext { font-size: 14.5px; line-height: 1.6; color: var(--fg); }
 
   .recap { margin-top: 36px; max-width: var(--colw); }
