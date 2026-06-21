@@ -79,16 +79,22 @@
   .opt { font-family: var(--display); font-weight:700; font-size:15px; padding: 16px 12px; border-radius: var(--r-card); border: 1.5px solid rgba(54,52,157,0.15); background: var(--lavendel); color: var(--dunkel); cursor:pointer; transition: all .18s var(--ease); text-align:center; }
   .opt:hover:not(:disabled) { border-color: var(--blau); background: rgba(54,52,157,0.07); transform: translateY(-2px); }
   .opt:disabled { cursor: default; }
-  .opt.correct { background: rgba(77,255,176,0.28); border-color: rgba(77,255,176,0.75); color: #0a6640; }
-  .opt.wrong { background: rgba(219,0,69,0.08); border-color: rgba(219,0,69,0.35); color: var(--kirsche); }
+  .opt:disabled:not(.correct):not(.wrong) { opacity: 0.4; }
+  .opt.correct::before { content: '✓'; font-weight: 800; margin-right: 4px; }
+  .opt.wrong::before { content: '✗'; font-weight: 800; margin-right: 4px; }
+  /* richtig getippt → grüner Akzent auf der eigenen Wahl */
+  .options.is-right .opt.correct { background: #fff; border-color: rgba(77,255,176,0.85); color: #0a6640; }
+  /* falsch getippt → richtige Antwort neutral zeigen (kein Grün neben dem Rot) */
+  .options.is-wrong .opt.correct { background: #fff; border-color: var(--line-strong); color: var(--dunkel); }
+  .options.is-wrong .opt.correct::before { color: var(--fg-muted); }
+  /* die falsche Wahl → zurückhaltende Kirsche, Kontur statt Füllung */
+  .opt.wrong { background: rgba(219,0,69,0.05); border-color: rgba(219,0,69,0.5); color: var(--kirsche); }
   .opt .sub { display:block; font-weight:600; font-size:11.5px; opacity:.7; margin-top:4px; letter-spacing:0.02em; }
 
   /* FEEDBACK */
-  .feedback { margin-top: 20px; border-radius: var(--r-card); padding: 16px 20px; display:none; animation: rise .3s var(--ease); }
+  .feedback { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); display:none; animation: rise .3s var(--ease); }
   @keyframes rise { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
   .feedback.show { display:block; }
-  .feedback.right { background: rgba(77,255,176,0.12); }
-  .feedback.wrong { background: rgba(219,0,69,0.06); }
   .feedback .verdict { font-family: var(--display); font-weight:800; font-size:14px; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
   .feedback.right .verdict { color: #0a6640; }
   .feedback.wrong .verdict { color: var(--kirsche); }
@@ -222,6 +228,7 @@ function choose(k){
     if (o.dataset.k === q.a) o.classList.add('correct');
     else if (o.dataset.k === k) o.classList.add('wrong');
   });
+  app.querySelector('.options').classList.add(correct ? 'is-right' : 'is-wrong');
   const fb = document.getElementById('fb');
   fb.className = 'feedback show ' + (correct ? 'right':'wrong');
   fb.innerHTML = `
