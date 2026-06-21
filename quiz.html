@@ -47,7 +47,7 @@
   .demo-card .dc-state.neu { color: var(--fg-muted); }
   .demo-card .dc-state.ok  { color: #0a6640; }
   .demo-card .dc-state.err { color: var(--kirsche); }
-  .demo-card .dc-fb { background: rgba(77,255,176,0.12); border-radius: var(--r-card); padding: 12px 15px; }
+  .demo-card .dc-fb { border-top: 1px solid var(--line); padding-top: 11px; margin-top: 12px; }
   .demo-card .dc-fb .v { font-family: var(--display); font-weight: 800; font-size: 11px; color: #0a6640; margin-bottom: 4px; }
   .demo-card .dc-fb .x { font-size: 12.5px; color: var(--fg-2); line-height: 1.5; }
 
@@ -109,6 +109,10 @@
   .result .verdict-t { color: var(--blau); font-family: var(--display); font-weight:800; font-size: clamp(1.3rem,2.6vw,1.8rem); margin-top: 18px; letter-spacing:-0.02em; }
   .result .verdict-s { color: var(--fg-2); font-size: 1.1rem; margin-top: 12px; line-height:1.55; max-width: 44ch; margin-inline:auto; }
   .result .cta-row { display:flex; gap: 14px; justify-content:center; flex-wrap:wrap; margin-top: 34px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
 </style>
 </head>
 <body>
@@ -211,7 +215,7 @@ function render(){
       <div class="options">
         ${ORDER.map(k=>`<button class="opt" data-k="${k}">${LABELS[k].t}<span class="sub">${LABELS[k].sub}</span></button>`).join('')}
       </div>
-      <div class="feedback" id="fb"></div>
+      <div class="feedback" id="fb" aria-live="polite"></div>
     </div>
     </div>`;
   app.querySelectorAll('.opt').forEach(o=> o.addEventListener('click', ()=> choose(o.dataset.k)));
