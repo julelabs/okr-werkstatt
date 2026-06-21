@@ -83,7 +83,7 @@
   .opt.correct::before { content: '✓'; font-weight: 800; margin-right: 4px; }
   .opt.wrong::before { content: '✗'; font-weight: 800; margin-right: 4px; }
   /* richtig getippt → grüner Akzent auf der eigenen Wahl */
-  .options.is-right .opt.correct { background: #fff; border-color: rgba(77,255,176,0.85); color: #0a6640; }
+  .options.is-right .opt.correct { background: rgba(77,255,176,0.15); border-color: rgba(77,255,176,0.85); color: #0a6640; }
   /* falsch getippt → richtige Antwort neutral zeigen (kein Grün neben dem Rot) */
   .options.is-wrong .opt.correct { background: #fff; border-color: var(--line-strong); color: var(--dunkel); }
   .options.is-wrong .opt.correct::before { color: var(--fg-muted); }
