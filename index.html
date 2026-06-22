@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>OKRKritikBot 3000 — Ziel- und Wirkungssteuerung</title>
+<meta name="description" content="Die OKR-Werkstatt für Verwaltungsteams: OKRs prüfen, verstehen und mit praktischen Werkzeugen anwenden." />
+<title>OKR-Werkstatt — Ziel- und Wirkungssteuerung</title>
 <link rel="stylesheet" href="shared/tokens.css" />
 <style>
   :root { --accent: #4DFFB0; --accent-ink: #0D0C2B; --r-card: 6px; --r-panel: 10px; }
@@ -18,7 +19,9 @@
     background: rgba(255,255,255,0.92); backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(54,52,157,0.1);
   }
-  nav.top .brand .tag { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--blau); line-height: 1.3; }
+  nav.top .brand .tag { font-family: var(--display); color: var(--blau); line-height: 1.25; }
+  nav.top .brand .tag strong { display: block; font-weight: 800; font-size: 14px; }
+  nav.top .brand .tag small { display: block; margin-top: 2px; color: var(--fg-muted); font-family: var(--body); font-size: 11px; font-weight: 400; }
   nav.top .links { display: flex; align-items: center; gap: 4px; }
   nav.top .links a { font-family: var(--display); font-weight: 600; font-size: 14px; text-decoration: none; color: rgba(13,12,43,0.62); padding: 8px 13px; border-radius: 6px; transition: color .2s, background .2s; }
   nav.top .links a:hover { color: var(--blau); background: rgba(54,52,157,0.07); }
@@ -43,7 +46,7 @@
   @media (max-width: 900px) { .hero-wrap { grid-template-columns: 1fr; } }
 
   /* headline */
-  .hero-product { display: block; font-family: var(--display); font-weight: 400; font-size: 0.38em; letter-spacing: -0.01em; color: var(--blau); margin-bottom: 12px; }
+  .hero-product { display: block; font-family: var(--display); font-weight: 700; font-size: 0.4em; letter-spacing: 0; color: var(--blau); margin-bottom: 14px; }
   .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(3.2rem, 6.4vw, 5.5rem); letter-spacing: -0.04em; line-height: 0.97; color: var(--dunkel); margin: 0; }
   .hero h1 .hl { color: var(--blau); }
   .hero .sub-1 { margin-top: 26px; font-size: clamp(1.08rem, 1.7vw, 1.28rem); line-height: 1.62; color: rgba(13,12,43,0.78); max-width: 42ch; }
@@ -166,7 +169,7 @@
 <!-- ══ NAV ══ -->
 <nav class="top">
   <div class="brand">
-    <span class="tag">Ziel- und<br>Wirkungssteuerung</span>
+    <span class="tag"><strong>OKR-Werkstatt</strong><small>Ziel- und Wirkungssteuerung</small></span>
   </div>
   <div class="links">
     <a href="#bot" class="nav-hide">Bot</a>
@@ -183,9 +186,9 @@
 
     <!-- LEFT: text -->
     <div class="hero-text">
-      <h1><span class="hero-product">OKRKritikBot 3000</span>Feedback,<br>das OKRs<br><span class="hl">schärft.</span></h1>
-      <p class="sub-1">Dein Zweitgutachter für Objectives und Key Results — gemacht für Verwaltungsteams.</p>
-      <p class="sub-2">Mit Lernpfad und Quiz — damit aus Feedback auch Verständnis wird.</p>
+      <h1><span class="hero-product">OKR-Werkstatt</span>Feedback,<br>das OKRs<br><span class="hl">schärft.</span></h1>
+      <p class="sub-1">Prüfen, verstehen, anwenden: eine Werkstatt für Objectives und Key Results — gemacht für Verwaltungsteams.</p>
+      <p class="sub-2">Mit OKRKritikBot 3000, Lernpfad, Quiz und Werkzeugen für den Arbeitsalltag.</p>
       <div class="hero-cta">
         <a href="#bot" class="btn btn-mint">Bot ausprobieren <span class="ch">›</span></a>
         <a href="lernpfad.html" class="btn btn-outline">Erst den Lernpfad</a>
@@ -298,7 +301,7 @@
 <!-- ══ FOOTER ══ -->
 <footer class="site">
   <div class="wrap">
-    <p class="fnote"><b>Ziel- und Wirkungssteuerung</b><br>Material für den OKR-Rollout. Intern nutzbar, gern weitergeben. Der OKRKritikBot 3000 ersetzt keine echte Auseinandersetzung mit euren Zielen — er beschleunigt sie nur.</p>
+    <p class="fnote"><b>OKR-Werkstatt · Ziel- und Wirkungssteuerung</b><br>Material für den OKR-Rollout. Intern nutzbar, gern weitergeben. Der OKRKritikBot 3000 ersetzt keine echte Auseinandersetzung mit euren Zielen — er beschleunigt sie nur.</p>
   </div>
 </footer>
 
