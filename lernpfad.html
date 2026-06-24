@@ -80,6 +80,7 @@
 
   /* ── ARTIFACT CARD (quiet input/context) ── */
   .artifact { background: #fff; border: 1.5px solid var(--line); border-radius: var(--r-card); padding: 16px 20px; max-width: var(--colw); }
+  .problem-start { margin-top: 22px; }
   .artifact .alabel { font-family: var(--display); font-weight: 800; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blau); opacity: 0.65; margin-bottom: 6px; }
   .artifact .atext { font-size: 1.05rem; line-height: 1.5; color: var(--fg); font-style: italic; }
   .artifact .anote { margin-top: 8px; font-size: 13.5px; color: var(--fg-muted); line-height: 1.45; }
@@ -543,12 +544,12 @@ function rProblem() {
   const letters = ['A','B','C','D'];
   return `
     <h1>Was ist eigentlich das Problem?</h1>
-    <p class="expl">Ein guter Vorsatz, aber noch kein Objective. „${P().vorsatzKurz}“ ist wie „gesünder leben“: Alle nicken, aber alle meinen etwas anderes. Wähle deshalb zuerst das konkrete Problem.</p>
+    <div class="artifact problem-start">
+      <div class="alabel">Euer Startpunkt</div>
+      <div class="atext">„${P().vorsatz}“</div>
+    </div>
+    <p class="expl">Das ist ein guter Vorsatz, aber noch kein Objective. „${P().vorsatzKurz}“ ist wie „gesünder leben“: Alle nicken, aber alle meinen etwas anderes. Wähle deshalb zuerst das konkrete Problem.</p>
     <div class="dgroup">
-      <div class="artifact">
-        <div class="alabel">Euer Startpunkt</div>
-        <div class="atext">„${P().vorsatz}“</div>
-      </div>
       <p class="prompt">Wähle das konkrete Problem:</p>
       <div class="cgrid">
         ${probs.map(([id,pr],i) => `
