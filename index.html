@@ -162,6 +162,9 @@
   footer.site .wrap { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
   footer.site .fnote { font-size: 13px; color: var(--fg-muted); line-height: 1.65; max-width: 44ch; }
   footer.site .fnote b { color: var(--fg-2); font-weight: 600; }
+  footer.site .flinks { display: flex; gap: 16px; flex-wrap: wrap; }
+  footer.site .flinks a { color: var(--fg-2); font-size: 13px; font-weight: 600; text-decoration: none; }
+  footer.site .flinks a:hover { color: var(--blau); }
 </style>
 </head>
 <body>
@@ -301,7 +304,11 @@
 <!-- ══ FOOTER ══ -->
 <footer class="site">
   <div class="wrap">
-    <p class="fnote"><b>OKR-Werkstatt · Ziel- und Wirkungssteuerung</b><br>Material für den OKR-Rollout. Intern nutzbar, gern weitergeben. Der OKRKritikBot 3000 ersetzt keine echte Auseinandersetzung mit euren Zielen — er beschleunigt sie nur.</p>
+    <p class="fnote"><b>OKR-Werkstatt · Ziel- und Wirkungssteuerung</b><br>Die OKR-Werkstatt ist ein öffentlicher Prototyp. Inhalte und Funktionen werden laufend weiterentwickelt. Feedback gerne an <a href="mailto:okr-werkstatt@breyer.berlin">okr-werkstatt@breyer.berlin</a>.</p>
+    <div class="flinks">
+      <a href="impressum.html">Impressum</a>
+      <a href="datenschutz.html">Datenschutz</a>
+    </div>
   </div>
 </footer>
 

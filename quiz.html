@@ -227,6 +227,8 @@ function choose(k){
   const q = Q[i];
   const correct = q.a === k;
   if (correct) score++;
+  const scoreEl = app.querySelector('.score');
+  if (scoreEl) scoreEl.textContent = `Punkte: ${score}`;
   app.querySelectorAll('.opt').forEach(o=>{
     o.disabled = true;
     if (o.dataset.k === q.a) o.classList.add('correct');
@@ -270,5 +272,11 @@ function result(){
 
 intro();
 </script>
+<footer class="legal-footer">
+  <div class="legal-footer-inner">
+    <span>Öffentlicher Prototyp · Feedback gerne an <a href="mailto:okr-werkstatt@breyer.berlin">okr-werkstatt@breyer.berlin</a></span>
+    <span class="legal-footer-links"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></span>
+  </div>
+</footer>
 </body>
 </html>
