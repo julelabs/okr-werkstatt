@@ -1,5 +1,5 @@
 /* ============================================================
-   BMDS / Das Haus — Design Tokens (adapted for OKRKritikBot site)
+   BMDS / Das Haus: Design Tokens (adapted for OKRKritikBot site)
    ============================================================ */
 
 @font-face {
@@ -56,7 +56,7 @@
   --display: 'Open Sans', system-ui, sans-serif;
   --body:    'BundesSans', 'Open Sans', system-ui, sans-serif;
 
-  /* Accent — overridable by Tweaks */
+  /* Accent: overridable by Tweaks */
   --accent:      var(--minze);
   --accent-ink:  var(--dunkel);
 

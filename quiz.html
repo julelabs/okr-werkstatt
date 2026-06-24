@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Quiz — Objective, Key Result oder keins? | BMDS</title>
+<title>Quiz | Objective, Key Result oder keins? | BMDS</title>
 <link rel="stylesheet" href="shared/tokens.css" />
 <style>
   body { background: var(--lavendel); color: var(--dunkel); min-height: 100vh; --r-card: 6px; --r-panel: 10px; }
@@ -21,7 +21,7 @@
   .quizwrap { padding: 0 0 90px; }
   .q-play { width: min(680px, 92vw); margin-inline: auto; padding-top: clamp(28px,5vh,52px); }
 
-  /* INTRO HERO — left aligned, 2 col (matches Lernpfad) */
+  /* INTRO HERO: left aligned, 2 col (matches Lernpfad) */
   .q-hero { width: min(1160px, 92vw); margin-inline: auto; padding: clamp(36px,6vh,72px) 0 clamp(40px,6vh,76px); display: grid; grid-template-columns: 1.02fr 1fr; gap: clamp(32px,5vw,64px); align-items: center; }
   @media (max-width: 880px){ .q-hero { grid-template-columns: 1fr; gap: 32px; } }
   .q-hero .kicker { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(54,52,157,0.5); margin-bottom: 12px; }
@@ -134,25 +134,25 @@
 <script>
 const Q = [
   { ctx: "Bürgerservice", s: "Die Bürgerinnen und Bürger erleben Anträge auf Wohngeld als spürbar einfacher und schneller.",
-    a: "objective", exp: "Ein erlebbarer Zielzustand am Ende — beschreibend, ambitioniert, ohne Zahl. Genau so sieht ein <b>Objective</b> aus." },
+    a: "objective", exp: "Ein erlebbarer Zielzustand am Ende: beschreibend, ambitioniert, ohne Zahl. Genau so sieht ein <b>Objective</b> aus." },
   { ctx: "Digitalisierung", s: "Bis Quartalsende sind 80 % der Wohngeld-Anträge digital eingereicht.",
-    a: "kr", exp: "Am Quartalsende eindeutig überprüfbar — erreicht oder nicht. Die Zahl macht den Zustand greifbar. Klares <b>Key Result</b>." },
+    a: "kr", exp: "Am Quartalsende eindeutig überprüfbar: erreicht oder nicht. Die Zahl macht den Zustand greifbar. Klares <b>Key Result</b>." },
   { ctx: "Aktenführung", s: "Einführung der E-Akte im Referat Z.",
-    a: "keins", exp: "Das ist eine <b>Maßnahme bzw. ein Projekt</b> — sie beschreibt weder den Zielzustand noch ein überprüfbares Ergebnis. Kein OKR." },
+    a: "keins", exp: "Das ist eine <b>Maßnahme bzw. ein Projekt</b>. Sie beschreibt weder den Zielzustand noch ein überprüfbares Ergebnis. Kein OKR." },
   { ctx: "Abteilungsziel", s: "Wir verbessern die Zusammenarbeit zwischen den Referaten.",
-    a: "keins", exp: "Ein guter Vorsatz, aber viel zu vage: kein beschriebener Zustand, nichts Überprüfbares. Noch <b>kein Objective</b> — erst der Startpunkt dafür." },
+    a: "keins", exp: "Ein guter Vorsatz, aber viel zu vage: kein beschriebener Zustand, nichts Überprüfbares. Noch <b>kein Objective</b>, sondern erst der Startpunkt dafür." },
   { ctx: "Wissensmanagement", s: "Für alle Referate liegt eine ohne Rückfragen nutzbare Übersicht zu Themen und Zuständigkeiten vor.",
-    a: "kr", exp: "Überprüfbares Ergebnis (liegt vor / liegt nicht vor) — ganz ohne Zahl, trotzdem messbar. Ein <b>Key Result</b>, denn Überprüfbarkeit braucht nicht zwingend Zahlen." },
+    a: "kr", exp: "Überprüfbares Ergebnis (liegt vor / liegt nicht vor), ganz ohne Zahl und trotzdem messbar. Ein <b>Key Result</b>, denn Überprüfbarkeit braucht nicht zwingend Zahlen." },
   { ctx: "Steuerung", s: "Die Fachaufsicht entscheidet auf einer verlässlichen, gemeinsam geteilten Datengrundlage.",
-    a: "objective", exp: "Ein erstrebenswerter, qualitativer Zustand — beschreibend statt aktivistisch. Das ist ein <b>Objective</b>." },
+    a: "objective", exp: "Ein erstrebenswerter, qualitativer Zustand, beschreibend statt aktivistisch. Das ist ein <b>Objective</b>." },
   { ctx: "Personalentwicklung", s: "Schulung von 30 Mitarbeitenden zu OKR durchführen.",
-    a: "keins", exp: "Achtung, Falle: Die Zahl misst hier nur <b>Aktivität</b>, nicht Wirkung. Eine Maßnahme bleibt eine Maßnahme — auch mit Zahl. Kein Key Result." },
+    a: "keins", exp: "Achtung, Falle: Die Zahl misst hier nur <b>Aktivität</b>, nicht Wirkung. Eine Maßnahme bleibt auch mit Zahl eine Maßnahme. Kein Key Result." },
   { ctx: "Fallbearbeitung", s: "Die Zahl unbearbeiteter Altfälle ist von 1.200 auf unter 300 gesenkt.",
     a: "kr", exp: "Am Quartalsende klar überprüfbar, die Zahl macht den Fortschritt greifbar. Ein sauberes <b>Key Result</b>." },
   { ctx: "Onboarding", s: "Das Onboarding neuer Kolleginnen und Kollegen fühlt sich strukturiert und willkommen heißend an.",
-    a: "objective", exp: "Ein qualitativer, erlebbarer Zielzustand. Beschreibend formuliert — ein <b>Objective</b>." },
+    a: "objective", exp: "Ein qualitativer, erlebbarer Zielzustand. Beschreibend formuliert, also ein <b>Objective</b>." },
   { ctx: "Routine", s: "Monatliches Jour fixe mit allen Referatsleitungen etablieren.",
-    a: "keins", exp: "Ein To-do bzw. eine Routine — kein Zielzustand und kein überprüfbares Ergebnis im OKR-Sinn. <b>Kein OKR</b> (höchstens eine Maßnahme auf dem Weg dahin)." }
+    a: "keins", exp: "Ein To-do bzw. eine Routine, kein Zielzustand und kein überprüfbares Ergebnis im OKR-Sinn. <b>Kein OKR</b> (höchstens eine Maßnahme auf dem Weg dahin)." }
 ];
 
 const LABELS = {
@@ -169,7 +169,7 @@ function intro(){
   app.innerHTML = `
     <div class="q-hero">
       <div class="q-hero-text">
-        <div class="kicker">04 — Quiz</div>
+        <div class="kicker">04 · Quiz</div>
         <h1>Objective, Key Result <span class="hl">oder Maßnahme?</span></h1>
         <p>Zehn echte Sätze aus Verwaltungsteams. Kannst du sie einordnen? Der Bot erklärt dir sofort, warum.</p>
         <div class="meta-chips">
@@ -192,7 +192,7 @@ function intro(){
         </div>
         <div class="dc-fb">
           <div class="v">Richtig!</div>
-          <div class="x">Eine Anschaffung ist eine klassische Maßnahme — eine Aktivität, kein Zielzustand und nichts am Quartalsende Messbares.</div>
+          <div class="x">Eine Anschaffung ist eine klassische Maßnahme: eine Aktivität, kein Zielzustand und nichts am Quartalsende Messbares.</div>
         </div>
       </div>
     </div>`;
@@ -251,9 +251,9 @@ function choose(k){
 function result(){
   let t, s;
   if (score >= 9){ t = "Der Bot ist beeindruckt."; s = "(Er gibt das nur ungern zu.) Du trennst Zustand, Ergebnis und Maßnahme im Schlaf. Bring jetzt deine echten Ziele mit."; }
-  else if (score >= 6){ t = "Solide Arbeit."; s = "Der Bot nickt knapp — und sucht weiter nach Maßnahmen im Tarnanzug. Eine Runde im Lernpfad schärft die letzten Kanten."; }
+  else if (score >= 6){ t = "Solide Arbeit."; s = "Der Bot nickt knapp und sucht weiter nach Maßnahmen im Tarnanzug. Eine Runde im Lernpfad schärft die letzten Kanten."; }
   else if (score >= 3){ t = "Ausbaufähig."; s = "Zustand, Ergebnis und Aktivität geraten noch durcheinander. Gute Nachricht: Genau dafür gibt es den Lernpfad."; }
-  else { t = "Der Bot hat schon den Lernpfad-Link kopiert."; s = "Kein Drama — fast jedes Set startet als Maßnahmenliste. Einmal durch den Lernpfad und das sieht anders aus."; }
+  else { t = "Der Bot hat schon den Lernpfad-Link kopiert."; s = "Kein Drama. Fast jedes Set startet als Maßnahmenliste. Einmal durch den Lernpfad und das sieht anders aus."; }
   app.innerHTML = `
     <div class="q-play">
     <div class="result">
