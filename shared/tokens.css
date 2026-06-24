@@ -11,6 +11,13 @@
   font-display: swap;
 }
 @font-face {
+  font-family: 'Open Sans';
+  src: url('../assets/fonts/OpenSans-Variable.ttf') format('truetype');
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: 'BundesSans';
   src: url('../assets/fonts/BundesSans-Web-RegularItalic.woff2') format('woff2'),
        url('../assets/fonts/BundesSans-Web-RegularItalic.woff') format('woff');
@@ -46,7 +53,7 @@
   --line-strong: rgba(54,52,157,0.35);
 
   /* Type */
-  --display: 'BundesSans', system-ui, sans-serif;
+  --display: 'Open Sans', system-ui, sans-serif;
   --body:    'BundesSans', 'Open Sans', system-ui, sans-serif;
 
   /* Accent — overridable by Tweaks */
