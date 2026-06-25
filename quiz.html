@@ -17,6 +17,10 @@
   nav.top .right a:hover { background: rgba(54,52,157,0.06); color: var(--blau); }
   nav.top .right a.act { color: var(--blau); font-weight: 700; }
   nav.top .right a.q { background: var(--minze); color: var(--dunkel); font-weight: 700; margin-left: 6px; }
+  @media (max-width: 760px) {
+    nav.top .right a:not(.q) { display: none; }
+    nav.top .right a.q { margin-left: 0; }
+  }
 
   .quizwrap { padding: 0 0 90px; }
   .q-play { width: min(680px, 92vw); margin-inline: auto; padding-top: clamp(28px,5vh,52px); }
@@ -126,6 +130,11 @@
       <a href="lernpfad.html">Lernpfad</a>
       <a href="quiz.html" class="act">Quiz</a>
       <a href="index.html#bot" class="q">Bot öffnen ›</a>
+    </div>
+    <div class="mobile-nav" aria-label="Bereiche">
+      <a href="werkzeugkoffer.html">Werkzeugkoffer</a>
+      <a href="lernpfad.html">Lernpfad</a>
+      <a href="quiz.html" class="act" aria-current="page">Quiz</a>
     </div>
   </nav>
 
