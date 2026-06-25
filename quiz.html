@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Quiz | Objective, Key Result oder keins? | BMDS</title>
-<link rel="stylesheet" href="shared/tokens.css" />
+<link rel="stylesheet" href="shared/tokens.css?v=20260625-2" />
 <style>
   body { background: var(--lavendel); color: var(--dunkel); min-height: 100vh; --r-card: 6px; --r-panel: 10px; }
   .wrap { width: min(760px, 92vw); margin-inline: auto; }
@@ -114,6 +114,42 @@
   .result .verdict-s { color: var(--fg-2); font-size: 1.1rem; margin-top: 12px; line-height:1.55; max-width: 44ch; margin-inline:auto; }
   .result .cta-row { display:flex; gap: 14px; justify-content:center; flex-wrap:wrap; margin-top: 34px; }
 
+  @media (max-width: 760px) {
+    nav.top { padding: 10px 16px 0; }
+    nav.top .brand { font-size: 14px; }
+    nav.top .right a.q { padding: 9px 14px; font-size: 14px; }
+    .quizwrap { padding-bottom: 64px; }
+    .q-hero { padding: 38px 0 54px; gap: 30px; }
+    .q-hero .kicker, .stmt .ctx { font-size: 12px; }
+    .q-hero h1 { font-size: 2.35rem; line-height: 1.06; }
+    .q-hero p { font-size: 1.06rem; line-height: 1.62; }
+    .meta-chips { gap: 7px; margin-top: 19px; }
+    .meta-chips .mc { padding: 7px 12px; font-size: 12.5px; }
+    .q-hero .hero-btns { display: grid; gap: 10px; width: min(100%, 260px); margin-top: 24px; }
+    .q-hero .hero-btns .btn { justify-content: center; min-height: 50px; }
+    .demo-card { padding: 21px 18px; }
+    .demo-card .dc-tag { font-size: 11px; }
+    .demo-card .dc-stmt { font-size: 1.2rem; }
+    .demo-card .dc-opts { gap: 6px; }
+    .demo-card .dc-opt { min-height: 48px; padding: 10px 4px; font-size: 12.5px; display: grid; place-items: center; }
+    .demo-card .dc-state { font-size: 11px; }
+    .demo-card .dc-fb .v { font-size: 12px; }
+    .demo-card .dc-fb .x { font-size: 14px; line-height: 1.55; }
+    .q-play { padding-top: 30px; }
+    .qhead .count, .qhead .score { font-size: 14.5px; }
+    .stmt { padding: 24px 20px; }
+    .stmt .s { font-size: 1.35rem; line-height: 1.35; }
+    .options { gap: 10px; margin-top: 22px; }
+    .opt { min-height: 54px; font-size: 16px; }
+    .opt .sub { font-size: 12.5px; }
+    .feedback .verdict { font-size: 15px; }
+    .feedback .exp { font-size: 16px; line-height: 1.6; }
+    .feedback .next-row .btn { width: 100%; justify-content: center; }
+    .result .verdict-s { font-size: 1.03rem; }
+    .result .cta-row .btn { width: 100%; justify-content: center; }
+    .legal-footer { font-size: 14px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
@@ -205,7 +241,12 @@ function intro(){
         </div>
       </div>
     </div>`;
-  document.getElementById('start').addEventListener('click', ()=>{ i=0; score=0; render(); });
+  document.getElementById('start').addEventListener('click', ()=>{
+    i=0;
+    score=0;
+    render();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
 }
 
 function render(){

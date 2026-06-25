@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Werkzeugkoffer | OKRKritikBot 3000</title>
-<link rel="stylesheet" href="shared/tokens.css" />
+<link rel="stylesheet" href="shared/tokens.css?v=20260625-2" />
 <style>
   body { background: var(--lavendel); color: var(--dunkel); min-height: 100vh; --r-card: 6px; --r-panel: 10px; }
   .wrap { width: min(1160px, 92vw); margin-inline: auto; }
@@ -66,6 +66,28 @@
   footer .ft-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 5px; }
   footer a { font-family: var(--display); font-weight: 700; font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; }
   footer a:hover { color: #fff; }
+
+  @media (max-width: 760px) {
+    nav.top { padding: 10px 16px 0; }
+    nav.top .brand { font-size: 14px; }
+    nav.top .right a.q { padding: 9px 14px; font-size: 14px; }
+    .koffer-hero { padding: 38px 0 34px; }
+    .koffer-hero .kicker, .phase-label .pnum { font-size: 12px; }
+    .koffer-hero h1 { font-size: 2.45rem; line-height: 1.04; }
+    .koffer-hero p { font-size: 1.06rem; line-height: 1.62; }
+    .phase { gap: 20px; padding: 34px 0 38px; }
+    .phase-label h2 { font-size: 1.55rem; }
+    .phase-label .pdesc { max-width: none; font-size: 15.5px; color: var(--fg-2); }
+    .phase-label .pmeta { margin-top: 12px; font-size: 12.5px; }
+    .tool-card { min-height: 0; padding: 21px 21px 22px; }
+    .kpill, .badge-soon { font-size: 11px; }
+    .tool-card h3 { font-size: 1.22rem; line-height: 1.22; }
+    .tool-card p { font-size: 15.5px; color: var(--fg-2); line-height: 1.55; }
+    .tc-link { font-size: 14.5px; }
+    footer { padding: 36px 0 42px; }
+    footer .ft-title { font-size: 15px; }
+    footer .ft-sub, footer a { font-size: 14px; line-height: 1.55; }
+  }
 </style>
 </head>
 <body>
