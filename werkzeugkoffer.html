@@ -39,7 +39,10 @@
   .phase-label .pmeta { font-family: var(--display); font-weight: 700; font-size: 11.5px; color: rgba(54,52,157,0.45); margin-top: 14px; }
 
   .phase-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
+  .phase-tools.formulieren { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 980px) { .phase-tools.formulieren { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .phase-tools { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .phase-tools.formulieren { grid-template-columns: 1fr; } }
 
   /* ── TOOL CARD ── */
   .tool-card { background: #fff; border: 1.5px solid rgba(54,52,157,0.12); border-radius: var(--r-card); padding: 20px 22px; display: flex; flex-direction: column; text-decoration: none; color: inherit; min-height: 168px; transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease); }
@@ -127,21 +130,27 @@
         <div class="pnum">Phase 1</div>
         <h2>Formulieren</h2>
         <p class="pdesc">Vom vagen Vorsatz zum echten OKR-Set: Zustand statt Aktivität.</p>
-        <div class="pmeta">1 von 2 verfügbar</div>
+        <div class="pmeta">3 Materialien</div>
       </div>
-      <div class="phase-tools">
+      <div class="phase-tools formulieren">
         <a class="tool-card" href="assets/downloads/Handreichung-OKR-Sets.pdf" target="_blank" rel="noopener">
           <div class="tc-top"><span class="kpill pdf">PDF · 4 Seiten</span></div>
           <h3>Handreichung: OKR-Sets formulieren</h3>
           <p>Von guten Vorsätzen zum ersten Objective und von dort zu überprüfbaren Key Results. Mit Beispielen und Mini-Checks.</p>
           <span class="tc-link">Herunterladen <span class="ch">›</span></span>
         </a>
-        <div class="tool-card soon">
-          <div class="tc-top"><span class="kpill pdf">PDF · 1 Seite</span><span class="badge-soon">folgt</span></div>
-          <h3>OKR-Spickzettel</h3>
-          <p>Eine Seite für den Schreibtisch: Zustand statt Aktivität, überprüfbar statt zahlenverliebt.</p>
-          <span class="tc-link muted">In Vorbereitung</span>
-        </div>
+        <a class="tool-card" href="assets/downloads/OKR-Satzbaukasten-Objectives.pdf" target="_blank" rel="noopener">
+          <div class="tc-top"><span class="kpill pdf">PDF · 4 Seiten</span></div>
+          <h3>Satzbaukasten für Objectives</h3>
+          <p>Formulierungsanfänge, Mittelstücke und Wirkungszusätze für Objectives, die einen erreichbaren Zielzustand beschreiben.</p>
+          <span class="tc-link">Herunterladen <span class="ch">›</span></span>
+        </a>
+        <a class="tool-card" href="assets/downloads/OKR-Satzbaukasten-Key-Results.pdf" target="_blank" rel="noopener">
+          <div class="tc-top"><span class="kpill pdf">PDF · 4 Seiten</span></div>
+          <h3>Satzbaukasten für Key Results</h3>
+          <p>Formulierungshilfen für überprüfbare Ergebnisse: Was wird sichtbar, gemessen oder in der Praxis anders?</p>
+          <span class="tc-link">Herunterladen <span class="ch">›</span></span>
+        </a>
       </div>
     </section>
 
