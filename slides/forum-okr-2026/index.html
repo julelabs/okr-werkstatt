@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Folien zum Impuls beim Forum OKR 2026: OKR-Werkstatt, Rollout-Trade-offs und OKRKritikBot 3000." />
+<meta property="og:title" content="OKR-Werkstatt: Prototyp aus der Rollout-Praxis" />
+<meta property="og:description" content="Folien zum Impuls beim Forum OKR 2026: zwei Regler, eine rote Linie, ein Constraint — und die OKR-Werkstatt als Antwort aus der Praxis." />
+<meta property="og:type" content="website" />
+<title>Folien Forum OKR 2026 | OKR-Werkstatt</title>
+<link rel="stylesheet" href="../../shared/tokens.css?v=20260711-1" />
+<style>
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 46% 58% at 87% 76%, rgba(77,255,176,0.42) 0%, rgba(77,255,176,0.12) 48%, transparent 70%),
+      radial-gradient(ellipse 44% 45% at 22% 15%, rgba(54,52,157,0.12) 0%, transparent 62%),
+      var(--lavendel);
+  }
+
+  .page {
+    width: min(1040px, 88vw);
+    min-height: 100vh;
+    margin-inline: auto;
+    padding: clamp(38px, 7vw, 72px) 0;
+    display: grid;
+    align-items: center;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--blau);
+    font-family: var(--display);
+    font-size: 0.84rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 26px;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background: var(--minze);
+  }
+
+  h1 {
+    max-width: 13ch;
+    color: var(--blau);
+    font-size: clamp(3.1rem, 8vw, 6.7rem);
+    line-height: 0.98;
+    margin-bottom: 26px;
+  }
+
+  .sub {
+    max-width: 58ch;
+    color: rgba(13,12,43,0.74);
+    font-size: clamp(1.08rem, 2vw, 1.32rem);
+    line-height: 1.62;
+  }
+
+  .actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 34px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 8px;
+    padding: 14px 22px;
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform .16s var(--ease), filter .2s var(--ease), background .2s var(--ease);
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--minze);
+    color: var(--dunkel);
+  }
+
+  .btn-primary:hover { filter: brightness(1.06); }
+
+  .btn-secondary {
+    color: var(--blau);
+    border: 1.5px solid rgba(54,52,157,0.28);
+    background: rgba(255,255,255,0.22);
+  }
+
+  .btn-secondary:hover { background: rgba(255,255,255,0.44); }
+
+  .note {
+    max-width: 72ch;
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(54,52,157,0.16);
+    color: rgba(13,12,43,0.58);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .note a {
+    color: var(--blau);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .note a:hover { text-decoration: underline; }
+
+  @media (max-width: 720px) {
+    .page { align-items: start; }
+    h1 { max-width: 11ch; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <section>
+      <div class="eyebrow">Forum OKR · 2026</div>
+      <h1>OKR-Werkstatt aus der Rollout-Praxis</h1>
+      <p class="sub">
+        Folien zum Impuls beim Forum OKR: zwei Regler, eine rote Linie, ein Constraint —
+        und eine digitale OKR-Werkstatt mit Lernpfad, Quiz, Werkzeugkoffer und OKRKritikBot 3000.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="forum-okr-2026-okr-werkstatt.pdf">Folien als PDF öffnen</a>
+        <a class="btn btn-secondary" href="../../">Zur OKR-Werkstatt</a>
+      </div>
+      <p class="note">
+        Hinweis: Diese Folienseite ist nicht in der Navigation der OKR-Werkstatt verlinkt.
+        Die OKR-Werkstatt ist ein privat entwickelter Prototyp und kein offizielles Angebot des Ministeriums.
+        Feedback gern an <a href="mailto:kontakt@okr-werkstatt.org">kontakt@okr-werkstatt.org</a>.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

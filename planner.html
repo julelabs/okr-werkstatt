@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Ein schlanker Ablaufplaner für OKR-Workshops mit Drag-and-drop, automatischen Zeiten und Druckansicht." />
+<title>OKR Ablaufplaner | OKR-Werkstatt</title>
+<link rel="icon" href="data:," />
+<link rel="stylesheet" href="shared/tokens.css?v=20260711-1" />
+<style>
+  :root {
+    --r-card: 6px;
+    --r-panel: 10px;
+    --blau-strong: rgba(54,52,157,0.2);
+  }
+
+  body { background: var(--weiss); color: var(--dunkel); min-height: 100vh; }
+  .wrap { width: min(1160px, 92vw); margin-inline: auto; }
+
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+
+  :where(a, button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--blau);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+                                      
+  nav.top {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px clamp(18px, 4vw, 48px);
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(54,52,157,0.1);
+  }
+  nav.top .brand { text-decoration: none; }
+  nav.top .brand .tag { font-family: var(--display); color: var(--blau); line-height: 1.25; }
+  nav.top .brand .tag strong { display: block; font-weight: 800; font-size: 14px; }
+  nav.top .brand .tag small { display: block; margin-top: 2px; color: var(--fg-muted); font-family: var(--body); font-size: 11px; font-weight: 400; }
+  nav.top .links { display: flex; align-items: center; gap: 4px; }
+  nav.top .links a { font-family: var(--display); font-weight: 600; font-size: 14px; text-decoration: none; color: rgba(13,12,43,0.62); padding: 8px 13px; border-radius: 6px; transition: color .2s, background .2s; }
+  nav.top .links a:hover { color: var(--blau); background: rgba(54,52,157,0.07); }
+  nav.top .links a.active { color: var(--blau); font-weight: 800; }
+  nav.top .links a.cta { background: var(--minze); color: var(--dunkel); font-weight: 700; margin-left: 6px; white-space: nowrap; }
+  nav.top .links a.cta:hover { filter: brightness(1.06); }
+  @media (max-width: 760px) { .nav-hide { display: none !important; } }
+
+                                          
+  .btn { font-family: var(--display); font-weight: 700; font-size: 15px; cursor: pointer; border: none; border-radius: 8px; padding: 13px 22px; text-decoration: none; display: inline-flex; align-items: center; gap: 9px; transition: transform .15s, filter .2s, background .2s; }
+  .btn:active { transform: scale(0.97); }
+  .btn .ch { font-weight: 800; letter-spacing: -0.06em; }
+  .btn-mint { background: var(--minze); color: var(--dunkel); }
+  .btn-mint:hover { filter: brightness(1.07); }
+  .btn-outline { background: transparent; color: var(--blau); border: 1.5px solid rgba(54,52,157,0.28); }
+  .btn-outline:hover { background: rgba(54,52,157,0.07); }
+
+                         
+  .header-band {
+    background: var(--lavendel);
+    background-image:
+      radial-gradient(ellipse 55% 80% at 88% 60%, rgba(77,255,176,0.14) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 60% at 74% 12%, rgba(54,52,157,0.07) 0%, transparent 60%);
+    padding: clamp(40px, 6vh, 56px) 0 44px;
+    position: relative; overflow: hidden;
+  }
+  .header-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: end;
+  }
+  .eyebrow { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--blau); margin-bottom: 12px; }
+
+  .title-input {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--dunkel);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    padding: 2px 4px 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: border-color .2s, background .2s;
+  }
+  .title-input:hover { border-bottom-color: rgba(54,52,157,0.22); }
+  .title-input:focus {
+    outline: 0;
+    background: rgba(255,255,255,0.55);
+    border-bottom-color: var(--blau);
+    border-radius: 4px;
+  }
+  .subline { margin-top: 10px; color: var(--fg-muted); font-size: 14px; line-height: 1.5; }
+
+                    
+  .stats {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    align-items: stretch;
+  }
+  .stat { padding: 0 clamp(14px, 2vw, 22px); }
+  .stat + .stat { border-left: 1px solid rgba(54,52,157,0.22); }
+  .stat:first-child { padding-left: 0; }
+  .stat:last-child { padding-right: 0; }
+  .stat-label { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: 6px; }
+  .stat-value,
+  .stat-button {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    letter-spacing: -0.01em;
+    color: var(--blau);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: center;
+    height: 1.2em;
+    border-bottom: 2px solid transparent;
+  }
+  .stat-button {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .stat-button.start-stat { width: 4.8ch; }
+  .stat-button:hover { border-bottom-color: rgba(54,52,157,0.24); }
+  .stat-button:focus-visible { outline: 0; border-bottom-color: var(--blau); }
+  .header-actions { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+  .header-actions .btn { font-size: 14px; padding: 11px 20px; }
+
+                         
+  .time-editor {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(13,12,43,0.28);
+    backdrop-filter: blur(10px);
+  }
+  .time-editor[hidden] { display: none; }
+  .time-sheet {
+    width: min(420px, 100%);
+    border: 1px solid rgba(54,52,157,0.16);
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(13,12,43,0.22);
+    overflow: hidden;
+  }
+  .time-sheet-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .time-sheet-head h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  .time-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--fg-2);
+    font-size: 21px;
+    line-height: 1;
+  }
+  .time-panel {
+    display: grid;
+    gap: 16px;
+    padding: 18px;
+  }
+  .time-panel[hidden] { display: none; }
+  .time-fields {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: end;
+  }
+  .time-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--fg-muted);
+    font-family: var(--display);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .time-field input {
+    width: 100%;
+    border: 1px solid rgba(54,52,157,0.18);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--blau);
+    font-family: var(--display);
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    padding: 11px 12px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .time-colon {
+    padding-bottom: 11px;
+    color: var(--blau);
+    font-family: var(--display);
+    font-size: 2rem;
+    font-weight: 800;
+  }
+  .time-quick {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .time-quick button {
+    min-height: 40px;
+    border: 1px solid rgba(54,52,157,0.18);
+    border-radius: 8px;
+    background: var(--blau-10);
+    color: var(--blau);
+    font-family: var(--display);
+    font-weight: 800;
+  }
+  .time-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .time-actions .btn {
+    justify-content: center;
+  }
+  .time-note {
+    color: var(--fg-muted);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+                         
+  .planner {
+    display: grid;
+    grid-template-columns: minmax(280px, 296px) minmax(0, 1fr);
+    gap: 24px;
+    padding: 28px 0 clamp(48px, 8vh, 80px);
+    align-items: start;
+  }
+
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: var(--r-panel);
+    background: var(--weiss);
+  }
+
+                     
+  .sidebar { position: sticky; top: 84px; overflow: hidden; }
+  .sb-group { padding: 16px 18px; }
+  .sb-group + .sb-group { border-top: 1px solid var(--line); }
+  .sb-head { padding: 16px 18px 12px; }
+  .sb-head h2 { font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--dunkel); }
+  .group-label { display: block; font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: 9px; }
+
+  .sb-group select,
+  .sb-group textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--weiss);
+    color: var(--fg);
+    padding: 9px 10px;
+    min-height: 40px;
+  }
+  .sb-group textarea { min-height: 84px; resize: vertical; line-height: 1.45; }
+
+  .segments {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .segments button {
+    min-height: 40px;
+    border: 0;
+    background: var(--weiss);
+    color: var(--fg-2);
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .segments button + button { border-left: 1px solid var(--line); }
+  .segments button.active { background: var(--blau); color: #fff; }
+
+  .hint { color: var(--fg-muted); font-size: 12px; line-height: 1.45; margin-top: 9px; }
+
+  .text-btn {
+    border: 0;
+    background: transparent;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--blau);
+    padding: 6px 0;
+  }
+  .text-btn:hover { text-decoration: underline; }
+  .text-btn.danger { color: var(--kirsche); }
+
+                    
+  .agenda { overflow: hidden; }
+  .agenda-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .agenda-head h2 { font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--dunkel); }
+
+  .agenda-list { padding: 4px 0; }
+
+                
+  .slot {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: start;
+    padding: 16px 20px 16px 8px;
+    position: relative;
+  }
+  .slot + .slot { border-top: 1px solid var(--line); }
+  .slot.dragging { opacity: 0.45; }
+  .slot.drop-target::before {
+    content: ""; position: absolute; top: -1px; left: 12px; right: 12px;
+    height: 2px; background: var(--minze); border-radius: 2px;
+  }
+
+            
+  .rail {
+    display: grid;
+    grid-template-columns: 16px 14px 1fr;
+    gap: 0;
+    align-items: start;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+  }
+  .rail:active { cursor: grabbing; }
+  .grab {
+    grid-column: 1;
+    font-family: var(--display);
+    color: var(--fg-muted);
+    opacity: 0.4;
+    cursor: grab;
+    line-height: 1;
+    font-size: 15px;
+    padding-top: 3px;
+    transition: opacity .15s, color .15s;
+    user-select: none;
+  }
+  .slot:hover .grab, .slot:focus-within .grab { opacity: 1; }
+  .rail:hover .grab { color: var(--blau); }
+  .grab:active { cursor: grabbing; }
+
+                         
+  .rail-line { grid-column: 2; position: relative; align-self: stretch; }
+  .rail-line::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--blau);
+    background: var(--weiss);
+    box-shadow: 0 0 0 2px var(--weiss);
+    z-index: 1;
+  }
+  .rail-line::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 5px;
+    bottom: -24px;
+    width: 2px;
+    background: var(--blau-20);
+  }
+  .slot:last-child .rail-line::after { display: none; }
+
+  .rail-time { grid-column: 3; position: relative; }
+  .rail-start { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--blau); line-height: 1.1; letter-spacing: -0.01em; }
+  .rail-end { font-size: 12px; color: var(--fg-muted); margin-top: 2px; }
+
+               
+  .slot-body { min-width: 0; }
+  .slot-title-row { display: flex; align-items: center; gap: 12px; }
+  .print-title,
+  .print-duration,
+  .print-notes { display: none; }
+  .st-input {
+    flex: 1; min-width: 0;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: var(--dunkel);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+    padding: 3px 2px;
+  }
+  .st-input:hover { border-bottom-color: rgba(54,52,157,0.2); }
+  .st-input:focus { outline: 0; border-bottom: 2px solid var(--minze); }
+
+                        
+  .dur {
+    display: inline-flex; align-items: center; gap: 2px;
+    flex-shrink: 0;
+  }
+  .dur-btn {
+    display: inline-grid; place-items: center;
+    width: 24px; height: 24px;
+    border: 0; border-radius: 5px;
+    background: transparent;
+    color: var(--fg-muted);
+    font-family: var(--display); font-weight: 800; font-size: 15px; line-height: 1;
+    transition: color .15s, background .15s;
+  }
+  .dur-btn:hover { color: var(--blau); background: var(--blau-10); }
+  .dur-input {
+    width: 42px;
+    border: 0; background: transparent;
+    text-align: right;
+    font-family: var(--display); font-weight: 700; font-size: 0.95rem;
+    color: var(--blau);
+    -moz-appearance: textfield;
+    padding: 2px 0;
+  }
+  .dur-input::-webkit-outer-spin-button,
+  .dur-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .dur-unit { font-size: 12px; color: var(--fg-muted); }
+
+                                          
+  .slot-preview {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 7px;
+    padding: 2px 6px;
+    margin-left: -6px; margin-right: -6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .slot-preview:hover {
+    background: var(--blau-10);
+  }
+  .slot-preview:hover .preview-text,
+  .slot-preview:hover .chev-btn,
+  .slot-preview:hover .collapse-label {
+    color: var(--blau);
+  }
+  .preview-text {
+    flex: 1; min-width: 0;
+    color: var(--fg-muted); font-size: 13px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: color .15s;
+  }
+  .collapse-label {
+    display: none;
+    flex: 1; min-width: 0;
+    color: var(--fg-muted); font-size: 13px;
+    font-family: var(--display); font-weight: 700;
+    transition: color .15s;
+  }
+  .chip {
+    flex-shrink: 0;
+    font-family: var(--display); font-weight: 700; font-size: 11px;
+    background: var(--blau-10); color: var(--blau);
+    padding: 3px 9px; border-radius: 999px;
+  }
+  .chev-btn {
+    flex-shrink: 0;
+    border: 0; background: transparent;
+    color: var(--fg-muted);
+    display: inline-grid; place-items: center;
+    width: 24px; height: 24px;
+    font-size: 16px; line-height: 1;
+    transition: color .15s;
+  }
+  .chev-btn .chev { display: inline-block; transition: transform .2s var(--ease); }
+  .slot.open .slot-preview .preview-text,
+  .slot.open .slot-preview .chip { display: none; }
+  .slot.open .slot-preview .collapse-label { display: block; }
+  .slot.open .chev-btn .chev { transform: rotate(90deg); }
+  .chev-btn:hover { color: var(--blau); }
+
+                       
+  .slot-detail {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .25s var(--ease);
+  }
+  .slot.open .slot-detail { grid-template-rows: 1fr; }
+  .slot-detail > .detail-inner { overflow: hidden; min-height: 0; }
+  .slot.open .slot-detail > .detail-inner { overflow: visible; }
+  .detail-box {
+    margin-top: 10px;
+    background: #fafaff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: grid;
+    gap: 12px;
+  }
+  .field-label { display: block; font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--fg-muted); margin-bottom: 5px; }
+  .detail-inner textarea {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: var(--fg);
+    resize: none;
+    overflow: hidden;
+    line-height: 1.5;
+    padding: 2px 0;
+  }
+  .detail-inner input {
+    width: 100%;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: var(--fg);
+    line-height: 1.5;
+    padding: 2px 0;
+  }
+  .detail-inner textarea:focus,
+  .detail-inner input:focus { outline: 0; border-bottom: 2px solid var(--minze); }
+
+               
+  .slot-actions {
+    display: flex; align-items: center; gap: 2px;
+    flex-shrink: 0;
+  }
+  .icon-btn {
+    display: inline-grid; place-items: center;
+    width: 28px; height: 28px;
+    border: 0; border-radius: 6px;
+    background: transparent;
+    color: var(--fg-muted);
+    opacity: 0.5;
+    transition: opacity .15s, color .15s, background .15s;
+  }
+  .slot:hover .icon-btn, .slot:focus-within .icon-btn { opacity: 1; }
+  .icon-btn:hover { background: var(--blau-10); color: var(--blau); }
+  .icon-btn:disabled { opacity: 0.2 !important; cursor: not-allowed; }
+  .icon-btn.del:hover { background: var(--kirsche-10); color: var(--kirsche); }
+  .icon-btn svg { display: block; }
+
+                            
+  .switch {
+    position: relative; display: inline-flex; align-items: center;
+    width: 34px; height: 20px; flex-shrink: 0;
+  }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .switch .track {
+    position: relative;
+    width: 34px; height: 20px; border-radius: 999px;
+    background: var(--blau-20);
+    transition: background .18s;
+    flex-shrink: 0;
+  }
+  .switch .track::after {
+    content: ""; position: absolute; left: 2px; top: 2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(13,12,43,0.25);
+    transition: transform .18s var(--ease);
+  }
+  .switch input:checked + .track { background: var(--blau); }
+  .switch input:checked + .track::after { transform: translateX(14px); }
+  .switch input:focus-visible + .track { outline: 2px solid var(--blau); outline-offset: 2px; }
+
+                     
+  .slot.disabled .slot-body,
+  .slot.disabled .rail-start,
+  .slot.disabled .rail-end { opacity: 0.45; }
+  .slot.disabled .st-input { text-decoration: line-through; }
+  .slot.disabled .rail-line::before { border-color: #b8b8c8; background: var(--weiss); }
+
+                   
+  .slot.break-slot { background: var(--lavendel); padding-top: 11px; padding-bottom: 11px; }
+  .slot.break-slot .st-input { font-family: var(--body); font-style: italic; font-weight: 700; font-size: 0.95rem; }
+
+                     
+  .quick-add-row {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 14px 20px 16px;
+    border-top: 1px dashed var(--line-strong);
+  }
+  .qa-btn {
+    border: 0; background: transparent;
+    font-family: var(--display); font-weight: 700; font-size: 13px;
+    color: var(--blau);
+    padding: 6px 11px; border-radius: 999px;
+    transition: background .15s;
+  }
+  .qa-btn:hover { background: var(--blau-10); }
+
+                   
+  .empty-state {
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--r-card);
+    margin: 16px 20px;
+    padding: 36px 20px;
+    color: var(--fg-muted);
+    text-align: center;
+    font-size: 14px;
+  }
+
+                       
+  .materials-board { border-top: 1px solid var(--line); padding: 18px 20px; }
+  .materials-board h3 { font-family: var(--display); font-weight: 800; font-size: 1rem; color: var(--dunkel); }
+  .material-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 6px 24px;
+    margin-top: 12px;
+  }
+  .material-item {
+    display: flex; align-items: center; gap: 9px;
+  }
+  .material-marker {
+    flex-shrink: 0;
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--blau-40);
+    border-radius: 3px;
+  }
+  .material-text {
+    font-size: 14px;
+    color: var(--fg-2);
+  }
+
+  .bottom-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+    padding: 18px 20px 20px;
+  }
+  .bottom-actions .btn { font-size: 14px; padding: 11px 20px; }
+
+             
+  .toast {
+    position: fixed; right: 24px; bottom: 24px; z-index: 80;
+    max-width: min(360px, calc(100vw - 48px));
+    border-radius: var(--r-card);
+    background: var(--dunkel);
+    color: #fff;
+    padding: 12px 14px;
+    box-shadow: 0 18px 50px rgba(13,12,43,0.28);
+    font-size: 13px;
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: opacity .2s var(--ease), transform .2s var(--ease);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  @media (hover: none) {
+    .grab, .icon-btn { opacity: 1 !important; }
+  }
+
+                        
+  @media (max-width: 980px) {
+    .header-grid { grid-template-columns: 1fr; align-items: start; gap: 20px; }
+    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .planner { grid-template-columns: 1fr; }
+    .sidebar { position: static; }
+  }
+
+  @media (max-width: 680px) {
+    nav.top { padding: 10px 16px 0; }
+    .header-actions,
+    .bottom-actions { display: grid; }
+    .header-actions .btn,
+    .bottom-actions .btn { justify-content: center; min-height: 48px; }
+    .slot {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 16px;
+    }
+    .rail { grid-template-columns: 1fr; cursor: auto; }
+    .grab { display: none; }
+    .rail-line { display: none; }
+    .rail-time { display: flex; align-items: baseline; gap: 10px; }
+    .rail-start { font-size: 15px; }
+    .slot-actions { flex-wrap: wrap; }
+    .stats { padding-left: 0; }
+    .slot-title-row { flex-wrap: wrap; }
+    .slot-title-row .st-input { flex: 1 1 100%; min-width: 0; }
+  }
+
+  @media (min-width: 681px) {
+    .mobile-inline-end { display: none; }
+  }
+
+  @media (min-width: 40px) {
+    .icon-btn, .qa-btn, .dur-btn, .chev-btn, .text-btn { min-width: 28px; }
+  }
+  @media (max-width: 680px) {
+    .icon-btn, .switch { min-width: 40px; min-height: 40px; }
+    .switch { width: 40px; }
+    .icon-btn { width: 40px; height: 40px; }
+  }
+
+                   
+                                                                           
+  .print-materials,
+  .print-moderation { display: none; }
+
+  @media print {
+    @page { margin: 13mm; size: A4 portrait; }
+    * { box-shadow: none !important; text-shadow: none !important; }
+    body { background: #fff; color: #111; font-size: 10.5pt; }
+
+    nav.top,
+    .header-actions,
+    .bottom-actions,
+    .sidebar,
+    .agenda-head .text-btn,
+    .grab, .chev-btn, .chip,
+    .slot-actions, .switch,
+    .quick-add-row,
+    .dur-btn, .dur-unit,
+    .legal-footer,
+    .toast { display: none !important; }
+
+    .header-band {
+      background: #fff; padding: 0 0 6mm; overflow: visible;
+      border-bottom: 3px solid var(--minze); margin-bottom: 6mm;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .header-grid { display: block; }
+    .eyebrow { color: #333; }
+    .title-input {
+      color: var(--blau); font-size: 22pt; border: 0; padding: 0;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .subline { color: #333; font-size: 9.5pt; }
+    .stats { display: none; }
+
+    .planner { display: block; padding: 0; }
+    .panel { border: 0; border-radius: 0; }
+    .agenda-head { display: none; }
+    .agenda-list { padding: 0; }
+
+    .slot {
+      break-inside: avoid;
+      display: grid;
+      grid-template-columns: 26mm minmax(0, 1fr);
+      gap: 5mm;
+      border-bottom: 1px solid #bbb;
+      padding: 3mm 0;
+    }
+    .slot + .slot { border-top: 0; }
+    .slot.disabled { display: none !important; }
+    .slot.break-slot {
+      background: var(--lavendel) !important;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      padding-left: 2mm; padding-right: 2mm;
+      margin-left: -2mm; margin-right: -2mm;
+    }
+
+    .rail { display: block; }
+    .rail-line { display: none; }
+    .rail-start {
+      color: var(--blau); font-size: 12pt;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .rail-end { color: #333; font-size: 8.5pt; }
+
+    .slot-title-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 14mm;
+      gap: 4mm;
+      align-items: start;
+      margin-bottom: 1mm;
+    }
+    .st-input { display: none; }
+    .print-title {
+      display: block;
+      color: #111;
+      font-family: var(--display);
+      font-size: 12pt;
+      font-weight: 800;
+      line-height: 1.18;
+      overflow-wrap: anywhere;
+    }
+    .slot.break-slot .print-title {
+      font-family: var(--body);
+      font-style: italic;
+      font-weight: 700;
+    }
+    .dur { display: block; text-align: right; }
+    .dur-input { display: none; }
+    .print-duration {
+      display: block;
+      color: #111;
+      font-size: 10pt;
+      font-weight: 700;
+      line-height: 1.2;
+      text-align: right;
+    }
+
+                                    
+    .slot-preview { display: none !important; }
+    .slot-detail { display: block !important; grid-template-rows: none !important; }
+    .slot-detail > .detail-inner { overflow: visible !important; }
+    .detail-inner,
+    .detail-box {
+      background: #fff !important; border: 0; padding: 0; margin-top: 1mm;
+      display: block;
+    }
+    .detail-inner .detail-field + .detail-field { margin-top: 1.5mm; }
+    .field-label { color: #333; font-size: 8pt; }
+    .detail-inner textarea {
+      display: block; width: 100%;
+      color: #222; font-size: 9pt; line-height: 1.35;
+      white-space: pre-wrap; border: 0; overflow: visible;
+    }
+    .detail-field-notes textarea { display: none; }
+    .print-notes {
+      display: block;
+      color: #222;
+      font-size: 9pt;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+    .detail-field-moderation { display: none; }
+                                                                                   
+    .detail-field-materials { display: none; }
+
+    .print-materials,
+    .print-moderation {
+      display: block;
+      margin-top: 1.5mm;
+      font-size: 9pt; color: #333;
+    }
+
+    body.participant-print .slot-detail,
+    body.participant-print .print-materials,
+    body.participant-print .print-moderation,
+    body.participant-print .materials-board { display: none !important; }
+
+    .materials-board {
+      border-top: 2px solid #111; padding: 6mm 0 0;
+      break-inside: avoid;
+    }
+    .material-list { display: block; columns: 2; column-gap: 16mm; }
+    .material-item { break-inside: avoid; margin-bottom: 2mm; }
+    .material-marker { display: none; }
+    .material-text { display: flex; align-items: center; gap: 3mm; color: #111; font-size: 10pt; }
+    .material-text::before {
+      content: "";
+      display: inline-block;
+      flex-shrink: 0;
+      width: 10pt; height: 10pt;
+      border: 1pt solid #333;
+      background: #fff;
+    }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a class="brand" href="index.html" aria-label="Zur Startseite">
+    <span class="tag"><strong>OKR-Werkstatt</strong><small>Ziel- und Wirkungssteuerung</small></span>
+  </a>
+  <div class="links">
+    <a href="index.html#bot" class="nav-hide">Bot</a>
+    <a href="werkzeugkoffer.html" class="nav-hide">Werkzeugkoffer</a>
+    <a href="planner.html" class="active nav-hide" aria-current="page">Planner</a>
+    <a href="lernpfad.html" class="nav-hide">Lernpfad</a>
+    <a href="quiz.html" class="nav-hide">Quiz</a>
+    <a href="index.html#bot" class="cta">Bot öffnen ›</a>
+  </div>
+  <div class="mobile-nav" aria-label="Bereiche">
+    <a href="werkzeugkoffer.html">Werkzeugkoffer</a>
+    <a href="planner.html" class="act" aria-current="page">Planner</a>
+    <a href="lernpfad.html">Lernpfad</a>
+    <a href="quiz.html">Quiz</a>
+  </div>
+</nav>
+
+<header class="header-band">
+  <div class="wrap header-grid">
+    <div>
+      <div class="eyebrow">Werkzeug · Ablaufplaner</div>
+      <input id="workshopTitle" class="title-input" type="text" aria-label="Workshop-Titel" placeholder="Workshop-Titel" />
+      <div class="subline" id="agendaSubline"></div>
+    </div>
+    <div class="stats" aria-live="polite">
+      <div class="stat">
+        <div class="stat-label">Start</div>
+        <button id="startTimeButton" class="stat-button start-stat" type="button" aria-label="Startzeit bearbeiten">13:00</button>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Ende</div>
+        <div class="stat-value" id="endTime">--:--</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Gesamtdauer</div>
+        <button id="totalDurationButton" class="stat-button" type="button" aria-label="Gesamtdauer bearbeiten">0m</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="header-actions">
+      <button class="btn btn-mint" id="printBtn" type="button" data-global-action="print">Drucken</button>
+      <button class="btn btn-outline" id="copyBtn" type="button" data-global-action="copy-markdown">Markdown kopieren</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap planner">
+  <aside class="panel sidebar">
+    <div class="sb-head"><h2>Setup</h2></div>
+
+    <div class="sb-group">
+      <span class="group-label" id="templateLabel">Template</span>
+      <select id="templateSelect" aria-labelledby="templateLabel"></select>
+    </div>
+
+    <div class="sb-group">
+      <span class="group-label">Format</span>
+      <div class="segments" id="formatSegments">
+        <button type="button" data-format="praesenz">Präsenz</button>
+        <button type="button" data-format="virtuell">Virtuell</button>
+      </div>
+    </div>
+
+    <div class="sb-group">
+      <span class="group-label">Druck</span>
+      <div class="segments" id="printSegments">
+        <button type="button" data-print="facilitator">Moderation</button>
+        <button type="button" data-print="participant">Handout</button>
+      </div>
+      <p class="hint">Handout blendet Notizen und Materialdetails beim Drucken aus.</p>
+    </div>
+
+    <div class="sb-group">
+      <p class="hint" style="margin-top:0">Änderungen werden automatisch im Browser gespeichert.</p>
+      <button class="text-btn danger" id="resetBtn" type="button">Template neu laden</button>
+    </div>
+  </aside>
+
+  <section class="panel agenda">
+    <div class="agenda-head">
+      <h2>Ablauf</h2>
+      <button class="text-btn" id="toggleAllBtn" type="button">Alle aufklappen</button>
+    </div>
+    <div class="agenda-list" id="agendaList"></div>
+    <div class="quick-add-row" id="quickAddRow">
+      <button class="qa-btn" type="button" data-add="custom">+ Slot</button>
+      <button class="qa-btn" type="button" data-add="break">+ Pause</button>
+      <button class="qa-btn" type="button" data-add="buffer">+ Puffer</button>
+      <button class="qa-btn" type="button" data-add="exercise">+ Übung</button>
+    </div>
+    <div class="materials-board">
+      <h3 id="materialsHeading">Materialliste</h3>
+      <div class="material-list" id="materialList"></div>
+    </div>
+    <div class="bottom-actions">
+      <button class="btn btn-mint" type="button" data-global-action="print">Drucken</button>
+      <button class="btn btn-outline" type="button" data-global-action="copy-markdown">Markdown kopieren</button>
+    </div>
+  </section>
+</main>
+
+<footer class="legal-footer">
+  <div class="legal-footer-inner">
+    <span>Privat entwickeltes, unabhängiges Projekt. Kein offizielles Angebot einer Behörde oder öffentlichen Stelle. Feedback gerne an <a href="mailto:kontakt@okr-werkstatt.org">kontakt@okr-werkstatt.org</a>.</span>
+    <span class="legal-footer-links"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a></span>
+  </div>
+</footer>
+
+<div class="time-editor" id="timeEditor" hidden>
+  <div class="time-sheet" role="dialog" aria-modal="true" aria-labelledby="timeEditorTitle">
+    <div class="time-sheet-head">
+      <h2 id="timeEditorTitle">Zeit bearbeiten</h2>
+      <button class="time-close" id="timeEditorClose" type="button" aria-label="Zeit-Editor schließen">×</button>
+    </div>
+
+    <div class="time-panel" id="startTimePanel">
+      <div class="time-fields">
+        <div class="time-field">
+          <label for="startHourInput">Stunde</label>
+          <input id="startHourInput" type="number" inputmode="numeric" min="0" max="23" step="1" />
+        </div>
+        <div class="time-colon">:</div>
+        <div class="time-field">
+          <label for="startMinuteInput">Minute</label>
+          <input id="startMinuteInput" type="number" inputmode="numeric" min="0" max="59" step="5" />
+        </div>
+      </div>
+      <div class="time-quick">
+        <button type="button" data-start-step="-30">-30</button>
+        <button type="button" data-start-step="-15">-15</button>
+        <button type="button" data-start-step="15">+15</button>
+        <button type="button" data-start-step="30">+30</button>
+      </div>
+      <div class="time-actions">
+        <button class="btn btn-outline" type="button" data-time-cancel>Abbrechen</button>
+        <button class="btn btn-mint" id="applyStartTimeBtn" type="button">Übernehmen</button>
+      </div>
+    </div>
+
+    <div class="time-panel" id="durationPanel" hidden>
+      <div class="time-fields">
+        <div class="time-field">
+          <label for="durationHourInput">Stunden</label>
+          <input id="durationHourInput" type="number" inputmode="numeric" min="0" max="12" step="1" />
+        </div>
+        <div class="time-colon">:</div>
+        <div class="time-field">
+          <label for="durationMinuteInput">Minuten</label>
+          <input id="durationMinuteInput" type="number" inputmode="numeric" min="0" max="59" step="5" />
+        </div>
+      </div>
+      <div class="time-quick">
+        <button type="button" data-duration-step="-30">-30</button>
+        <button type="button" data-duration-step="-15">-15</button>
+        <button type="button" data-duration-step="15">+15</button>
+        <button type="button" data-duration-step="30">+30</button>
+      </div>
+      <p class="time-note">Die Differenz landet zuerst im Puffer. Wenn kein Puffer passt, werden die letzten aktiven Slots angepasst.</p>
+      <div class="time-actions">
+        <button class="btn btn-outline" type="button" data-time-cancel>Abbrechen</button>
+        <button class="btn btn-mint" id="applyDurationBtn" type="button">Übernehmen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var STORAGE_KEY = 'okr-workshop-planner-v1';
+  var uidCounter = 0;
+
+  var templates = [
+    {
+      id: 'blank',
+      name: 'Leeres Template',
+      type: 'Workshop',
+      defaultFormat: 'praesenz',
+      defaultStart: '09:00',
+      slots: []
+    },
+    {
+      id: 'planning-erstes-mal',
+      name: 'OKR Planning - Erster Zyklus',
+      type: 'Planning',
+      defaultFormat: 'praesenz',
+      defaultStart: '13:00',
+      slots: [
+        {
+          title: 'Ankommen und Check-in',
+          minutes: 10,
+          notes: 'Check-in Frage: Welche App auf deinem Handy benutzt du am häufigsten und warum?',
+          materials: 'Snacks'
+        },
+        {
+          title: 'Theorie - Basics',
+          minutes: 10,
+          notes: 'Was ist OKR\nWarum\nZyklus',
+          materials: 'Flipcharts'
+        },
+        {
+          title: 'Themen sammeln (Stillarbeit)',
+          minutes: 10,
+          notes: 'Max. 3 Karten pro Person.\n\nThemen: Wo lohnt sich Fokus? Wo tut der Arbeitsalltag weh?\n\nLeitfragen:\n- Wenn ihr in 3 Monaten zurückschaut: Wo wollt ihr sagen "da haben wir wirklich was bewegt"?\n- Wo verliert ihr gerade unnötig Zeit, Abstimmung oder Wirkung?\n- Welcher konkrete Fortschritt ist bis Ende des nächsten Zyklus besonders wichtig?\n- Wo wollen wir in 3 Monaten etwas bewegt haben?\n- Was sind eure wichtigsten Themen für die nächsten 3 Monate?\n- Was aus der Retro ist so relevant, dass ihr aktiv dran wollt?\n\nRetro-Themen hier einbringen.',
+          materials: 'Time Timer\nModerationsmaterialien\nBlanko Flipchart oder Fläche'
+        },
+        {
+          title: 'Clustern und Auswählen',
+          minutes: 30,
+          notes: 'Alle hängen gleichzeitig oder nacheinander schnell auf. Live moderierend clustern.\n\nLeitfrage: "Wofür würdet ihr wirklich Zeit investieren - und dafür anderes liegen lassen?"',
+          materials: ''
+        },
+        {
+          title: 'Theorie - Objectives',
+          minutes: 10,
+          notes: 'Was sind gute Objectives',
+          materials: 'Gute Objectives\nBeispiel Handreichung (ggf. als Präsentation)'
+        },
+        {
+          title: 'Breakout: Objectives bauen',
+          minutes: 40,
+          notes: 'Objective: Was ist konkret anders?\n\nFragen:\n- Was ist am Ende konkret anders als heute? Nicht was ihr tut, sondern was sich verändert hat?\n- Für wen wird es spürbar besser - und woran merkt diese Person das im Alltag?\n\nBeim Rumgehen bei "verbessern", "stärken", "optimieren" immer nachhaken: Wie genau sieht das dann aus?',
+          materials: 'Satzbaukasten x 2\nFlipcharts Themen\nPräsentation oder Handout für Handreichungsbeispiel x 2'
+        },
+        {
+          title: 'Theorie - KR',
+          minutes: 10,
+          notes: 'Was sind gute Key Results',
+          materials: 'Flipcharts Gute Key Results\nBeispiel Handreichung (ggf. als Präsentation)'
+        },
+        {
+          title: 'Pause',
+          minutes: 10,
+          notes: 'Ggf. Objectives minimal nachschärfen und auf neue Flipcharts übertragen. Besser: im Plenum klären.',
+          materials: ''
+        },
+        {
+          title: 'Key Results bauen',
+          minutes: 45,
+          notes: 'Gleichbleibende Breakouts wie bei Objectives.\n\nKR: Woran sieht man Fortschritt im Alltag?\n\nFragen:\n- Wenn ihr wetten müsstet: Was müsste sich zuerst verändern?\n- Woran würdet ihr während des Zyklus merken, dass ihr auf dem richtigen Weg seid?\n- Welche Veränderung könnt ihr beobachten?\n\nBeim Rumgehen bei "Workshop durchgeführt", "Konzept erstellt" nachfragen: Und was ist danach anders?',
+          materials: 'Satzbaukasten x 2\nPräsentation oder Handout für Handreichungsbeispiel x 2\nFlipcharts Objective'
+        },
+        {
+          title: 'Sets vorstellen und KR Owner wählen',
+          minutes: 20,
+          notes: 'KR werden vorgestellt, Verständnisfragen beantwortet, kurze Diskussion wo nötig. KR Owner wählen.',
+          materials: 'Kronen :)'
+        },
+        {
+          title: 'Puffer und Check-out',
+          minutes: 10,
+          notes: 'Nächste Schritte und Check-ins erklären.',
+          materials: 'Flip Chart Zyklus\nFlip Chart Erste Schritte'
+        }
+      ]
+    },
+    {
+      id: 'planning-abteilung',
+      name: 'OKR Planning - Folgezyklus',
+      type: 'Planning',
+      defaultFormat: 'praesenz',
+      defaultStart: '13:00',
+      slots: [
+        {
+          title: 'Ankommen und Check-in',
+          minutes: 15,
+          notes: 'Wenn mehr Zeit sein sollte hier einfügen:\n- Objective Breakout\n- Key Result Breakout',
+          materials: 'Snacks'
+        },
+        {
+          title: 'Themen sammeln (Stillarbeit)',
+          minutes: 10,
+          notes: 'Max. 3 Karten pro Person.\n\nThemen: Wo lohnt sich Fokus? Wo tut der Arbeitsalltag weh?\n\nLeitfragen:\n- Wenn ihr in 3 Monaten zurückschaut: Wo wollt ihr sagen "da haben wir wirklich was bewegt"?\n- Wo verliert ihr gerade unnötig Zeit, Abstimmung oder Wirkung?\n- Welcher konkrete Fortschritt ist bis Ende des nächsten Zyklus besonders wichtig?\n- Wo wollen wir in 3 Monaten etwas bewegt haben?\n- Was sind eure wichtigsten Themen für die nächsten 3 Monate?\n- Was aus der Retro ist so relevant, dass ihr aktiv dran wollt?\n\nRetro-Themen hier einbringen.',
+          materials: 'Time Timer\nModerationsmaterialien\nBlanko Flipchart oder Fläche'
+        },
+        {
+          title: 'Clustern und Auswählen',
+          minutes: 40,
+          notes: 'Alle hängen gleichzeitig oder nacheinander schnell auf. Live moderierend clustern.\n\nLeitfrage: "Wofür würdet ihr wirklich Zeit investieren - und dafür anderes liegen lassen?"',
+          materials: ''
+        },
+        {
+          title: 'Breakout: Objective bauen',
+          minutes: 45,
+          notes: 'Mini-Theorie-Recap.\n\nObjective: Was ist konkret anders?\n\nFragen:\n- Was ist am Ende konkret anders als heute? Nicht was ihr tut, sondern was sich verändert hat?\n- Für wen wird es spürbar besser - und woran merkt diese Person das im Alltag?\n\nBeim Rumgehen bei "verbessern", "stärken", "optimieren" immer nachhaken: Wie genau sieht das dann aus?',
+          materials: 'Flipcharts Gute Objectives\nSatzbaukasten x 2\nFlipcharts Themen\nPräsentation oder Handout für Handreichungsbeispiel x 2'
+        },
+        {
+          title: 'Pause',
+          minutes: 10,
+          notes: 'Ggf. Objectives minimal nachschärfen und auf neue Flipcharts übertragen. Besser: im Plenum klären.',
+          materials: ''
+        },
+        {
+          title: 'Key Results bauen',
+          minutes: 60,
+          notes: 'Gleichbleibende Breakouts wie bei Objectives.\n\nKR: Woran sieht man Fortschritt im Alltag?\n\nFragen:\n- Wenn ihr wetten müsstet: Was müsste sich zuerst verändern?\n- Woran würdet ihr während des Zyklus merken, dass ihr auf dem richtigen Weg seid?\n- Welche Veränderung könnt ihr beobachten?\n\nBeim Rumgehen bei "Workshop durchgeführt", "Konzept erstellt" nachfragen: Und was ist danach anders?',
+          materials: 'Satzbaukasten x 2\nPräsentation oder Handout für Handreichungsbeispiel x 2\nFlipcharts Gute Key Results\nFlipcharts Objective'
+        },
+        {
+          title: 'Sets vorstellen und KR Owner wählen',
+          minutes: 20,
+          notes: 'KR werden vorgestellt, Verständnisfragen beantwortet, kurze Diskussion wo nötig. KR Owner wählen.',
+          materials: 'Kronen :)'
+        },
+        {
+          title: 'Puffer und Check-out',
+          minutes: 10,
+          notes: 'Nächste Schritte und Check-ins erklären.',
+          materials: 'Flip Chart Zyklus\nFlip Chart Erste Schritte'
+        }
+      ]
+    },
+    {
+      id: 'okr-intro-25',
+      name: 'OKR Intro - Teaching Session',
+      type: 'Teaching',
+      defaultFormat: 'praesenz',
+      defaultStart: '09:30',
+      slots: [
+        {
+          title: 'Ankommen und Check-in',
+          minutes: 10,
+          notes: 'Check-in-Fragen:\n- Wer hat schon mit anderen Methoden des agilen Arbeitens gearbeitet?\n- Wer hat noch nie von OKR gehört?\n- Wer hat schon Berührung mit OKR gehabt?',
+          materials: 'Flipchart Agenda\nTimer\nPräsentation'
+        },
+        {
+          title: 'Orientierung',
+          minutes: 10,
+          notes: 'Warum Wirkungssteuerung?\nWarum OKR?\nUnterschied Objective / Key Result.\nZyklus.\n\nBei Führungskraftfokus:\n- Wo klassische Zielsteuerung oft zu vage bleibt\n- Warum Maßnahmenklarheit nicht dasselbe ist wie Zielklarheit\n- Was OKR für Führung interessant macht: Fokus, sichtbare Veränderung, Gesprächsgrundlage für Nachsteuerung',
+          materials: 'Flipchart OKR Überblick\nFlipchart OKR Was/Warum\nFlipchart Bestandteile OKR\nFlipchart Zyklus\nFlipchart Objectives\nFlipchart Key Results'
+        },
+        {
+          title: 'Slido Spiel',
+          minutes: 15,
+          notes: '7 Fragen.\n\nLink: [Slido-Link einfügen]\nCode: [Code einfügen]',
+          materials: ''
+        },
+        {
+          title: 'Übung Objective und Key Results',
+          minutes: 45,
+          notes: 'Beispiel "Zusammenarbeit" anhand des Handouts durchgehen und Objective-/KR-Gedankengänge erklären (10 min).\n\nAufgabe erklären (5 min).\n\nGruppen entwickeln Objective und 1-2 Key Results (30 min).\n\nSituation: Wenn Leute vertreten müssen, wissen sie, wo sie was finden.',
+          materials: '5 Aufgabenstellung\n5 Flipcharts "Thema"\n5 Flipchart "Objective"'
+        },
+        {
+          title: 'Pause',
+          minutes: 10,
+          notes: '',
+          materials: ''
+        },
+        {
+          title: 'Ergebnisse der Übung gemeinsam sichten',
+          minutes: 30,
+          notes: 'Gruppen zeigen ihre Objectives und 1-2 Key Results.\n\nZu jedem Set ein Feedback geben oder aus der Gruppe kommen lassen.\n\nBei 5 Gruppen: 5 Minuten pro Gruppe.\n\nWenn mehr Zeit ist als 3h: Ein konsolidiertes OKR-Set daraus erstellen (30-45 min).',
+          materials: ''
+        },
+        {
+          title: 'Transfer',
+          minutes: 20,
+          notes: 'OKR vs. Linie.\nOKR-Zyklus in der Praxis.\nQ&A.',
+          materials: 'Flipchart Einstieg Praxis\nFlipchart KPI vs KR'
+        },
+        {
+          title: 'Check-out',
+          minutes: 5,
+          notes: 'Was nehmt ihr heute mit?',
+          materials: 'Flipchart ROTI'
+        }
+      ]
+    },
+    {
+      id: 'review-retro',
+      name: 'OKR Review + Retro',
+      type: 'Review',
+      defaultFormat: 'praesenz',
+      defaultStart: '11:00',
+      slots: [
+        {
+          title: 'Ankommen und Check-in',
+          minutes: 15,
+          notes: 'Check-in-Frage (z. B. Welche App auf deinem Handy nutzt du am meisten und warum?)',
+          materials: 'Agenda Flipchart\nKaffee und Süßes\nModerationsbox'
+        },
+        {
+          title: 'Status OKR Sets',
+          minutes: 10,
+          notes: 'Nur kurz die Excel durchgehen.',
+          materials: 'Bildschirm\nExcel-Tabelle'
+        },
+        {
+          title: 'Überleitung',
+          minutes: 5,
+          notes: 'Was passiert jetzt.\nUnterschied Review/Retro.',
+          materials: ''
+        },
+        {
+          title: 'Review & Retro',
+          minutes: 10,
+          notes: 'TN schreiben still und hängen dann an.\n\nFragen:\n- Waren die Objectives für den Zyklus passend geschnitten und strategisch hilfreich?\n- Was hat auf Ebene der Key Results gut funktioniert, und wo gab es Grenzen oder Schwierigkeiten?\n- Wie gut hat die Arbeit mit den OKRs im Arbeitsalltag tatsächlich funktioniert?\n- Wie lief unsere Zusammenarbeit im Zyklus?',
+          materials: 'Flipchart Review\nFlipchart Retro'
+        },
+        {
+          title: 'Pause',
+          minutes: 10,
+          notes: '(Nach-)clustern und bei Zeitmangel schon mal Learnings vorsteuern.',
+          materials: ''
+        },
+        {
+          title: 'Analyse: Muster und Learnings ableiten',
+          minutes: 30,
+          notes: 'Cluster zeigen + Verständnisfragen (10 min).\nLearnings festhalten (20 min).',
+          materials: 'Flipchart Learnings'
+        },
+        {
+          title: 'Check-out',
+          minutes: 10,
+          notes: '',
+          materials: ''
+        }
+      ]
+    }
+  ];
+
+  var DEFAULT_TEMPLATE_ID = 'planning-erstes-mal';
+
+  var quickSlots = {
+    break: { title: 'Pause', minutes: 10, moderation: '', notes: '', materials: '' },
+    buffer: { title: 'Puffer', minutes: 10, moderation: '', notes: 'Zeit für Übergang, Fragen oder Nachschärfung.', materials: '' },
+    exercise: { title: 'Übung', minutes: 30, moderation: '', notes: 'Aufgabe erklären, Arbeitsphase, kurze Auswertung.', materials: 'Timer\nArbeitsmaterial' },
+    custom: { title: 'Neuer Slot', minutes: 15, moderation: '', notes: '', materials: '' }
+  };
+
+  var state = {
+    templateId: DEFAULT_TEMPLATE_ID,
+    title: '',
+    format: 'praesenz',
+    printMode: 'facilitator',
+    startTime: '13:00',
+    slots: []
+  };
+
+                                                     
+  var expanded = {};
+  var timeEditorMode = 'start';
+
+  var els = {
+    templateSelect: document.getElementById('templateSelect'),
+    startTimeButton: document.getElementById('startTimeButton'),
+    formatSegments: document.getElementById('formatSegments'),
+    printSegments: document.getElementById('printSegments'),
+    workshopTitle: document.getElementById('workshopTitle'),
+    agendaSubline: document.getElementById('agendaSubline'),
+    agendaList: document.getElementById('agendaList'),
+    totalDurationButton: document.getElementById('totalDurationButton'),
+    endTime: document.getElementById('endTime'),
+    materialList: document.getElementById('materialList'),
+    materialsHeading: document.getElementById('materialsHeading'),
+    toggleAllBtn: document.getElementById('toggleAllBtn'),
+    timeEditor: document.getElementById('timeEditor'),
+    timeEditorTitle: document.getElementById('timeEditorTitle'),
+    timeEditorClose: document.getElementById('timeEditorClose'),
+    startTimePanel: document.getElementById('startTimePanel'),
+    durationPanel: document.getElementById('durationPanel'),
+    startHourInput: document.getElementById('startHourInput'),
+    startMinuteInput: document.getElementById('startMinuteInput'),
+    durationHourInput: document.getElementById('durationHourInput'),
+    durationMinuteInput: document.getElementById('durationMinuteInput'),
+    applyStartTimeBtn: document.getElementById('applyStartTimeBtn'),
+    applyDurationBtn: document.getElementById('applyDurationBtn'),
+    toast: document.getElementById('toast')
+  };
+
+  function makeId() {
+    uidCounter += 1;
+    return 'slot-' + Date.now().toString(36) + '-' + uidCounter;
+  }
+
+  function cloneSlot(slot) {
+    return {
+      id: makeId(),
+      title: slot.title || 'Neuer Slot',
+      minutes: Number(slot.minutes) || 10,
+      moderation: slot.moderation || '',
+      notes: slot.notes || '',
+      materials: slot.materials || '',
+      enabled: slot.enabled !== false
+    };
+  }
+
+  function loadTemplate(templateId) {
+    var template = templates.find(function(item) { return item.id === templateId; }) || templates.find(function(item) { return item.id === DEFAULT_TEMPLATE_ID; }) || templates[0];
+    state = {
+      templateId: template.id,
+      title: template.name,
+      format: template.defaultFormat,
+      printMode: state.printMode || 'facilitator',
+      startTime: template.defaultStart,
+      slots: template.slots.map(cloneSlot)
+    };
+    expanded = {};
+    persist();
+    render();
+    showToast('Template geladen');
+  }
+
+  function hydrate() {
+    templates.forEach(function(template) {
+      var option = document.createElement('option');
+      option.value = template.id;
+      option.textContent = template.name;
+      els.templateSelect.appendChild(option);
+    });
+
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      if (saved && Array.isArray(saved.slots)) {
+        state = saved;
+        state.slots = state.slots.map(function(slot) {
+          slot.id = slot.id || makeId();
+          slot.moderation = slot.moderation || '';
+          slot.enabled = slot.enabled !== false;
+          return slot;
+        });
+      } else {
+        loadTemplate(DEFAULT_TEMPLATE_ID);
+        return;
+      }
+    } catch (err) {
+      loadTemplate(DEFAULT_TEMPLATE_ID);
+      return;
+    }
+
+    render();
+  }
+
+  function persist() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function minutesFromTime(value) {
+    var parts = String(value || '00:00').split(':').map(Number);
+    return (parts[0] || 0) * 60 + (parts[1] || 0);
+  }
+
+  function timeFromMinutes(total) {
+    var day = 24 * 60;
+    total = ((total % day) + day) % day;
+    var hours = Math.floor(total / 60);
+    var minutes = total % 60;
+    return String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0');
+  }
+
+  function durationLabel(minutes) {
+    minutes = Math.max(0, Number(minutes) || 0);
+    var h = Math.floor(minutes / 60);
+    var m = minutes % 60;
+    if (h && m) return h + 'h ' + m + 'm';
+    if (h) return h + 'h';
+    return m + 'm';
+  }
+
+  function activeSlots() {
+    return state.slots.filter(function(slot) { return slot.enabled !== false; });
+  }
+
+  function totalActiveMinutes() {
+    return activeSlots().reduce(function(sum, slot) {
+      return sum + (Number(slot.minutes) || 0);
+    }, 0);
+  }
+
+  function splitMinutes(total) {
+    total = Math.max(0, Number(total) || 0);
+    return {
+      hours: Math.floor(total / 60),
+      minutes: total % 60
+    };
+  }
+
+  function setPairInputs(hourInput, minuteInput, total) {
+    var parts = splitMinutes(total);
+    hourInput.value = String(parts.hours).padStart(2, '0');
+    minuteInput.value = String(parts.minutes).padStart(2, '0');
+  }
+
+  function readPairInputs(hourInput, minuteInput, maxHours) {
+    var hours = Number(hourInput.value);
+    var minutes = Number(minuteInput.value);
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+    hours = Math.max(0, Math.floor(hours));
+    minutes = Math.max(0, Math.floor(minutes));
+    if (typeof maxHours === 'number') hours = Math.min(maxHours, hours);
+    if (minutes > 59) {
+      hours += Math.floor(minutes / 60);
+      minutes = minutes % 60;
+    }
+    return { hours: hours, minutes: minutes, total: hours * 60 + minutes };
+  }
+
+  function openTimeEditor(mode) {
+    timeEditorMode = mode;
+    var editingStart = mode === 'start';
+    els.timeEditorTitle.textContent = editingStart ? 'Startzeit bearbeiten' : 'Gesamtdauer bearbeiten';
+    els.startTimePanel.hidden = !editingStart;
+    els.durationPanel.hidden = editingStart;
+    if (editingStart) {
+      setPairInputs(els.startHourInput, els.startMinuteInput, minutesFromTime(state.startTime));
+    } else {
+      setPairInputs(els.durationHourInput, els.durationMinuteInput, totalActiveMinutes());
+    }
+    els.timeEditor.hidden = false;
+  }
+
+  function closeTimeEditor() {
+    els.timeEditor.hidden = true;
+  }
+
+  function stepPair(hourInput, minuteInput, delta, wrapDay) {
+    var current = readPairInputs(hourInput, minuteInput, wrapDay ? 23 : null);
+    if (!current) return;
+    var next = current.total + delta;
+    if (wrapDay) {
+      next = ((next % (24 * 60)) + (24 * 60)) % (24 * 60);
+    } else {
+      next = Math.max(0, next);
+    }
+    setPairInputs(hourInput, minuteInput, next);
+  }
+
+  function applyStartEditor() {
+    var value = readPairInputs(els.startHourInput, els.startMinuteInput, 23);
+    if (!value) {
+      showToast('Bitte Stunde und Minute eingeben');
+      return;
+    }
+    state.startTime = timeFromMinutes(value.total);
+    persist();
+    render();
+    closeTimeEditor();
+  }
+
+  function preferredDurationSlots() {
+    var active = activeSlots();
+    var buffer = active.find(function(slot) { return /puffer/i.test(slot.title || ''); });
+    var ordered = [];
+    if (buffer) ordered.push(buffer);
+    active.slice().reverse().forEach(function(slot) {
+      if (slot !== buffer) ordered.push(slot);
+    });
+    return ordered;
+  }
+
+  function applyTotalDuration(targetTotal) {
+    var current = totalActiveMinutes();
+    var delta = targetTotal - current;
+    var slots = preferredDurationSlots();
+    if (!slots.length) {
+      showToast('Keine aktiven Slots zum Anpassen');
+      return false;
+    }
+    if (delta > 0) {
+      slots[0].minutes = (Number(slots[0].minutes) || 0) + delta;
+      return true;
+    }
+    if (delta < 0) {
+      var remaining = Math.abs(delta);
+      var removableTotal = slots.reduce(function(sum, slot) {
+        return sum + Math.max(0, (Number(slot.minutes) || 0) - 5);
+      }, 0);
+      if (remaining > removableTotal) {
+        showToast('So kurz geht es mit den aktiven Slots nicht');
+        return false;
+      }
+      slots.forEach(function(slot) {
+        if (!remaining) return;
+        var currentMinutes = Number(slot.minutes) || 0;
+        var removable = Math.max(0, currentMinutes - 5);
+        var take = Math.min(removable, remaining);
+        slot.minutes = currentMinutes - take;
+        remaining -= take;
+      });
+    }
+    return true;
+  }
+
+  function applyDurationEditor() {
+    var value = readPairInputs(els.durationHourInput, els.durationMinuteInput, 12);
+    if (!value) {
+      showToast('Bitte Dauer eingeben');
+      return;
+    }
+    if (applyTotalDuration(value.total)) {
+      persist();
+      render();
+      closeTimeEditor();
+    }
+  }
+
+  function getTimeline() {
+    var cursor = minutesFromTime(state.startTime);
+    return state.slots.map(function(slot) {
+      var start = cursor;
+      var end = cursor;
+      if (slot.enabled !== false) {
+        end = start + (Number(slot.minutes) || 0);
+        cursor = end;
+      }
+      return { id: slot.id, start: start, end: end };
+    });
+  }
+
+  function getMaterials() {
+    var seen = {};
+    var result = [];
+    state.slots.forEach(function(slot) {
+      if (slot.enabled === false || !slot.materials) return;
+      slot.materials.split('\n').map(function(item) { return item.trim(); }).filter(Boolean).forEach(function(item) {
+        var key = item.toLowerCase();
+        if (!seen[key]) {
+          seen[key] = true;
+          result.push(item);
+        }
+      });
+    });
+    result.sort(function(a, b) { return a.localeCompare(b, 'de', { sensitivity: 'base' }); });
+    return result;
+  }
+
+  function isBreak(title) {
+    var t = String(title || '').trim().toLowerCase();
+    return t === 'pause' || t === 'puffer';
+  }
+
+  function materialsCount(value) {
+    return String(value || '').split('\n').map(function(i) { return i.trim(); }).filter(Boolean).length;
+  }
+
+  function firstLine(value) {
+    var lines = String(value || '').split('\n').map(function(i) { return i.trim(); }).filter(Boolean);
+    return lines.length ? lines[0] : '';
+  }
+
+  function render() {
+    els.templateSelect.value = state.templateId;
+    els.startTimeButton.textContent = state.startTime;
+    els.workshopTitle.value = state.title;
+    document.body.classList.toggle('participant-print', state.printMode === 'participant');
+
+    Array.from(els.formatSegments.querySelectorAll('button')).forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.format === state.format);
+    });
+    Array.from(els.printSegments.querySelectorAll('button')).forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.print === state.printMode);
+    });
+
+    var template = templates.find(function(item) { return item.id === state.templateId; });
+    var activeSlots = state.slots.filter(function(slot) { return slot.enabled !== false; });
+    var total = totalActiveMinutes();
+    var end = minutesFromTime(state.startTime) + total;
+    var materials = getMaterials();
+
+    els.totalDurationButton.textContent = durationLabel(total);
+    els.endTime.textContent = timeFromMinutes(end);
+    els.materialsHeading.textContent = 'Materialliste' + (materials.length ? ' · ' + materials.length : '');
+    els.agendaSubline.textContent = [
+      template ? template.type : 'Workshop',
+      state.format === 'virtuell' ? 'Virtuell' : 'Präsenz',
+      state.startTime + '–' + timeFromMinutes(end),
+      durationLabel(total),
+      activeSlots.length + ' Slots'
+    ].join(' · ');
+
+    renderSlots();
+    renderMaterials(materials);
+    updateToggleAllLabel();
+  }
+
+  function renderSlots() {
+    els.agendaList.innerHTML = '';
+    if (!state.slots.length) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = 'Noch keine Slots. Füge unten einen neuen Slot hinzu.';
+      els.agendaList.appendChild(empty);
+      return;
+    }
+
+    var timeline = getTimeline().reduce(function(map, item) {
+      map[item.id] = item;
+      return map;
+    }, {});
+
+    state.slots.forEach(function(slot, index) {
+      var isOpen = !!expanded[slot.id];
+      var brk = isBreak(slot.title);
+      var time = timeline[slot.id];
+      var disabled = slot.enabled === false;
+      var matCount = materialsCount(slot.materials);
+      var preview = firstLine(slot.notes);
+
+      var item = document.createElement('article');
+      item.className = 'slot'
+        + (disabled ? ' disabled' : '')
+        + (brk ? ' break-slot' : '')
+        + (isOpen ? ' open' : '');
+      item.draggable = true;
+      item.dataset.id = slot.id;
+
+      var railStart = disabled ? 'aus' : timeFromMinutes(time.start);
+      var railEnd = disabled ? 'deaktiviert' : (timeFromMinutes(time.end) + ' · ' + durationLabel(slot.minutes));
+
+      var chevBtn = '<button class="chev-btn" type="button" data-action="toggle-open" aria-label="' + (isOpen ? 'Details zuklappen' : 'Details aufklappen') + '" aria-expanded="' + (isOpen ? 'true' : 'false') + '"><span class="chev">›</span></button>';
+
+                                                                                            
+      var previewHtml = '';
+      var showPreview = !(brk && !preview && !matCount);
+      if (showPreview) {
+        previewHtml =
+          '<div class="slot-preview" data-role="preview">' +
+            '<span class="preview-text">' + (preview ? escapeHtml(preview) : '') + '</span>' +
+            '<span class="collapse-label">Zuklappen</span>' +
+            (matCount ? '<span class="chip">' + matCount + ' Material' + (matCount === 1 ? '' : 'ien') + '</span>' : '') +
+            chevBtn +
+          '</div>';
+      }
+
+      item.innerHTML = [
+        '<div class="rail" title="Ziehen zum Sortieren">',
+          '<div class="grab" aria-hidden="true">⠿</div>',
+          '<div class="rail-line" aria-hidden="true"></div>',
+          '<div class="rail-time">',
+            '<div class="rail-start">' + railStart + '</div>',
+            '<div class="rail-end">' + railEnd + '</div>',
+          '</div>',
+        '</div>',
+        '<div class="slot-body">',
+          '<div class="slot-title-row">',
+            '<input class="st-input" data-field="title" value="' + escapeAttr(slot.title) + '" aria-label="Slot-Titel" />',
+            '<span class="print-title">' + escapeHtml(slot.title) + '</span>',
+            '<div class="dur">',
+              '<button class="dur-btn" type="button" data-action="min-minus" aria-label="Dauer verringern">−</button>',
+              '<input class="dur-input" data-field="minutes" type="number" min="0" step="5" value="' + escapeAttr(slot.minutes) + '" aria-label="Dauer in Minuten" />',
+              '<span class="print-duration">' + escapeHtml(slot.minutes) + '</span>',
+              '<button class="dur-btn" type="button" data-action="min-plus" aria-label="Dauer erhöhen">+</button>',
+              '<span class="dur-unit">min</span>',
+            '</div>',
+            (showPreview ? '' : chevBtn),
+          '</div>',
+          previewHtml,
+          '<div class="slot-detail">',
+            '<div class="detail-inner">',
+            '<div class="detail-box">',
+              '<div class="detail-field detail-field-moderation">',
+                '<label class="field-label">Moderation</label>',
+                '<input data-field="moderation" value="' + escapeAttr(slot.moderation) + '" aria-label="Moderation" placeholder="z. B. Julia, Co-Moderation, Timekeeper" />',
+              '</div>',
+              '<div class="detail-field detail-field-notes">',
+                '<label class="field-label">Moderationsnotizen</label>',
+                '<textarea class="notes-input" data-field="notes" aria-label="Moderationsnotizen" placeholder="Moderationsnotizen, Leitfragen, Ablauf …">' + escapeHtml(slot.notes) + '</textarea>',
+                '<div class="print-notes">' + escapeHtml(slot.notes) + '</div>',
+              '</div>',
+              '<div class="detail-field detail-field-materials">',
+                '<label class="field-label">Material (je Zeile ein Eintrag)</label>',
+                '<textarea class="materials-input" data-field="materials" aria-label="Material" placeholder="Material, je Zeile ein Eintrag">' + escapeHtml(slot.materials) + '</textarea>',
+              '</div>',
+              (slot.moderation ? '<div class="print-moderation">Moderation: ' + escapeHtml(slot.moderation) + '</div>' : ''),
+              (matCount ? '<div class="print-materials">Material: ' + escapeHtml(slot.materials.split('\n').map(function(i) { return i.trim(); }).filter(Boolean).join(' · ')) + '</div>' : ''),
+            '</div>',
+            '</div>',
+          '</div>',
+        '</div>',
+        '<div class="slot-actions">',
+          '<label class="switch" title="Slot aktiv"><input type="checkbox" data-action="toggle" ' + (disabled ? '' : 'checked') + ' aria-label="Slot aktiv" /><span class="track"></span></label>',
+          '<button class="icon-btn" type="button" data-action="duplicate" title="Duplizieren" aria-label="Duplizieren">' + icon('duplicate') + '</button>',
+          '<button class="icon-btn" type="button" data-action="merge" title="Mit vorherigem zusammenführen" aria-label="Mit vorherigem zusammenführen" ' + (index === 0 ? 'disabled' : '') + '>' + icon('merge') + '</button>',
+          '<button class="icon-btn" type="button" data-action="up" title="Nach oben" aria-label="Nach oben">' + icon('up') + '</button>',
+          '<button class="icon-btn" type="button" data-action="down" title="Nach unten" aria-label="Nach unten">' + icon('down') + '</button>',
+          '<button class="icon-btn del" type="button" data-action="delete" title="Löschen" aria-label="Löschen">' + icon('delete') + '</button>',
+        '</div>'
+      ].join('');
+
+      item.addEventListener('dragstart', onDragStart);
+      item.addEventListener('dragover', onDragOver);
+      item.addEventListener('dragleave', onDragLeave);
+      item.addEventListener('drop', onDrop);
+      item.addEventListener('dragend', onDragEnd);
+      item.addEventListener('mousedown', onSlotMouseDown);
+      els.agendaList.appendChild(item);
+    });
+
+                                                                                         
+    Array.from(els.agendaList.querySelectorAll('textarea')).forEach(autoGrow);
+  }
+
+  function icon(kind) {
+    var attrs = 'width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+    var paths = {
+      duplicate: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/>',
+      merge: '<path d="M12 4v16"/><path d="M6 10l6 6 6-6"/>',
+      up: '<path d="M12 19V5"/><path d="M6 11l6-6 6 6"/>',
+      down: '<path d="M12 5v14"/><path d="M6 13l6 6 6-6"/>',
+      delete: '<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M9 7V4h6v3"/>'
+    };
+    return '<svg ' + attrs + '>' + (paths[kind] || '') + '</svg>';
+  }
+
+  function autoGrow(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight) + 'px';
+  }
+
+  function renderMaterials(materials) {
+    els.materialList.innerHTML = '';
+    if (!materials.length) {
+      var empty = document.createElement('span');
+      empty.className = 'hint';
+      empty.textContent = 'Noch keine Materialien in aktiven Slots.';
+      els.materialList.appendChild(empty);
+      return;
+    }
+    materials.forEach(function(item) {
+      var row = document.createElement('div');
+      row.className = 'material-item';
+      var marker = document.createElement('span');
+      marker.className = 'material-marker';
+      marker.setAttribute('aria-hidden', 'true');
+      var text = document.createElement('span');
+      text.className = 'material-text';
+      text.textContent = item;
+      row.appendChild(marker);
+      row.appendChild(text);
+      els.materialList.appendChild(row);
+    });
+  }
+
+  function updateToggleAllLabel() {
+    var allOpen = state.slots.length > 0 && state.slots.every(function(slot) { return expanded[slot.id]; });
+    els.toggleAllBtn.textContent = allOpen ? 'Alle zuklappen' : 'Alle aufklappen';
+  }
+
+  function escapeHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, function(char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[char];
+    });
+  }
+
+  function escapeAttr(value) {
+    return escapeHtml(value).replace(/"/g, '&quot;');
+  }
+
+  function findSlot(id) {
+    return state.slots.find(function(slot) { return slot.id === id; });
+  }
+
+  function findIndex(id) {
+    return state.slots.findIndex(function(slot) { return slot.id === id; });
+  }
+
+  function updateSlot(id, field, value, shouldRender) {
+    var slot = findSlot(id);
+    if (!slot) return;
+    if (field === 'minutes') {
+      slot.minutes = Math.max(0, Number(value) || 0);
+    } else {
+      slot[field] = value;
+    }
+    persist();
+    if (shouldRender) render();
+  }
+
+  function addSlot(kind) {
+    var slot = cloneSlot(quickSlots[kind] || quickSlots.custom);
+    expanded[slot.id] = true;                                    
+    state.slots.push(slot);
+    persist();
+    render();
+  }
+
+  function duplicateSlot(id) {
+    var index = findIndex(id);
+    if (index < 0) return;
+    var copy = cloneSlot(state.slots[index]);
+    if (expanded[id]) expanded[copy.id] = true;
+    state.slots.splice(index + 1, 0, copy);
+    persist();
+    render();
+  }
+
+  function deleteSlot(id) {
+    state.slots = state.slots.filter(function(slot) { return slot.id !== id; });
+    delete expanded[id];
+    persist();
+    render();
+  }
+
+  function mergeWithPrevious(id) {
+    var index = findIndex(id);
+    if (index <= 0) return;
+    var previous = state.slots[index - 1];
+    var current = state.slots[index];
+    previous.title = previous.title + ' + ' + current.title;
+    previous.minutes = (Number(previous.minutes) || 0) + (Number(current.minutes) || 0);
+    previous.moderation = [previous.moderation, current.moderation].filter(Boolean).join(' / ');
+    previous.notes = [previous.notes, current.notes].filter(Boolean).join('\n\n---\n\n');
+    previous.materials = [previous.materials, current.materials].filter(Boolean).join('\n');
+    state.slots.splice(index, 1);
+    delete expanded[id];
+    persist();
+    render();
+  }
+
+  function moveSlot(id, direction) {
+    var index = findIndex(id);
+    var target = index + direction;
+    if (index < 0 || target < 0 || target >= state.slots.length) return;
+    var item = state.slots.splice(index, 1)[0];
+    state.slots.splice(target, 0, item);
+    persist();
+    render();
+  }
+
+  function stepMinutes(id, delta) {
+    var slot = findSlot(id);
+    if (!slot) return;
+    slot.minutes = Math.max(0, (Number(slot.minutes) || 0) + delta);
+    persist();
+    render();
+  }
+
+  function onSlotMouseDown(event) {
+    var slot = event.currentTarget;
+    var inRail = !!event.target.closest('.rail');
+    slot.draggable = inRail;
+  }
+
+  function restoreDraggable() {
+    Array.from(els.agendaList.querySelectorAll('.slot')).forEach(function(el) {
+      el.draggable = true;
+    });
+  }
+
+  function onDragStart(event) {
+    var slot = event.currentTarget;
+    slot.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', slot.dataset.id);
+  }
+
+  function onDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    event.currentTarget.classList.add('drop-target');
+  }
+
+  function onDragLeave(event) {
+    event.currentTarget.classList.remove('drop-target');
+  }
+
+  function onDrop(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drop-target');
+    var fromId = event.dataTransfer.getData('text/plain');
+    var toId = event.currentTarget.dataset.id;
+    if (!fromId || !toId || fromId === toId) return;
+    var fromIndex = findIndex(fromId);
+    var toIndex = findIndex(toId);
+    if (fromIndex < 0 || toIndex < 0) return;
+    var item = state.slots.splice(fromIndex, 1)[0];
+    state.slots.splice(toIndex, 0, item);
+    persist();
+    render();
+  }
+
+  function onDragEnd(event) {
+    event.currentTarget.classList.remove('dragging');
+    Array.from(els.agendaList.querySelectorAll('.drop-target')).forEach(function(el) {
+      el.classList.remove('drop-target');
+    });
+    restoreDraggable();
+  }
+
+                                                                                
+                                                                   
+  document.addEventListener('mouseup', restoreDraggable);
+
+  function markdownExport() {
+    var timeline = getTimeline().reduce(function(map, item) {
+      map[item.id] = item;
+      return map;
+    }, {});
+    var lines = [
+      '# ' + state.title,
+      '',
+      '- Format: ' + (state.format === 'virtuell' ? 'Virtuell' : 'Präsenz'),
+      '- Start: ' + state.startTime,
+      '- Dauer: ' + durationLabel(totalActiveMinutes()),
+      '- Ende: ' + els.endTime.textContent
+    ];
+    lines.push('', '## Ablauf');
+    state.slots.forEach(function(slot) {
+      if (slot.enabled === false) return;
+      var time = timeline[slot.id];
+      lines.push('', '### ' + timeFromMinutes(time.start) + '–' + timeFromMinutes(time.end) + ' ' + slot.title + ' (' + durationLabel(slot.minutes) + ')');
+      if (slot.moderation) lines.push('', 'Moderation: ' + slot.moderation);
+      if (slot.notes) lines.push(slot.notes);
+      if (slot.materials) lines.push('', 'Material:', slot.materials.split('\n').map(function(item) { return '- ' + item; }).join('\n'));
+    });
+    return lines.join('\n');
+  }
+
+  function copyMarkdown() {
+    var text = markdownExport();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function() {
+        showToast('Markdown in die Zwischenablage kopiert');
+      });
+    } else {
+      showToast('Zwischenablage ist in diesem Browser nicht verfügbar');
+    }
+  }
+
+  function showToast(message) {
+    els.toast.textContent = message;
+    els.toast.classList.add('show');
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(function() {
+      els.toast.classList.remove('show');
+    }, 1800);
+  }
+
+                          
+  els.templateSelect.addEventListener('change', function(event) {
+    loadTemplate(event.target.value);
+  });
+
+  els.startTimeButton.addEventListener('click', function() {
+    openTimeEditor('start');
+  });
+
+  els.totalDurationButton.addEventListener('click', function() {
+    openTimeEditor('duration');
+  });
+
+  els.timeEditorClose.addEventListener('click', closeTimeEditor);
+
+  els.timeEditor.addEventListener('click', function(event) {
+    if (event.target === els.timeEditor || event.target.closest('[data-time-cancel]')) {
+      closeTimeEditor();
+    }
+  });
+
+  els.timeEditor.addEventListener('click', function(event) {
+    var startStep = event.target.closest('[data-start-step]');
+    var durationStep = event.target.closest('[data-duration-step]');
+    if (startStep) {
+      stepPair(els.startHourInput, els.startMinuteInput, Number(startStep.dataset.startStep), true);
+    }
+    if (durationStep) {
+      stepPair(els.durationHourInput, els.durationMinuteInput, Number(durationStep.dataset.durationStep), false);
+    }
+  });
+
+  els.applyStartTimeBtn.addEventListener('click', applyStartEditor);
+  els.applyDurationBtn.addEventListener('click', applyDurationEditor);
+
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && !els.timeEditor.hidden) closeTimeEditor();
+  });
+
+  els.workshopTitle.addEventListener('input', function(event) {
+    state.title = event.target.value;
+    persist();
+    render();
+  });
+
+  els.formatSegments.addEventListener('click', function(event) {
+    var btn = event.target.closest('button[data-format]');
+    if (!btn) return;
+    state.format = btn.dataset.format;
+    persist();
+    render();
+  });
+
+  els.printSegments.addEventListener('click', function(event) {
+    var btn = event.target.closest('button[data-print]');
+    if (!btn) return;
+    state.printMode = btn.dataset.print;
+    persist();
+    render();
+  });
+
+  document.getElementById('quickAddRow').addEventListener('click', function(event) {
+    var btn = event.target.closest('button[data-add]');
+    if (!btn) return;
+    addSlot(btn.dataset.add);
+  });
+
+  els.toggleAllBtn.addEventListener('click', function() {
+    var allOpen = state.slots.length > 0 && state.slots.every(function(slot) { return expanded[slot.id]; });
+    if (allOpen) {
+      expanded = {};
+    } else {
+      state.slots.forEach(function(slot) { expanded[slot.id] = true; });
+    }
+    render();
+  });
+
+  document.addEventListener('click', function(event) {
+    var globalAction = event.target.closest('[data-global-action]');
+    if (!globalAction) return;
+    if (globalAction.dataset.globalAction === 'copy-markdown') copyMarkdown();
+    if (globalAction.dataset.globalAction === 'print') window.print();
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function() {
+    if (confirm('Template neu laden? Deine Änderungen an diesem Plan gehen dabei verloren.')) {
+      loadTemplate(state.templateId);
+    }
+  });
+
+  els.agendaList.addEventListener('input', function(event) {
+    var slotEl = event.target.closest('.slot');
+    var field = event.target.dataset.field;
+    if (!slotEl || !field) return;
+    if (event.target.tagName === 'TEXTAREA') autoGrow(event.target);
+                                                                             
+    updateSlot(slotEl.dataset.id, field, event.target.value, false);
+  });
+
+  els.agendaList.addEventListener('change', function(event) {
+    var slotEl = event.target.closest('.slot');
+    if (!slotEl) return;
+    var field = event.target.dataset.field;
+    if (field) {
+      updateSlot(slotEl.dataset.id, field, event.target.value, true);
+      return;
+    }
+    if (event.target.dataset.action === 'toggle') {
+      var slot = findSlot(slotEl.dataset.id);
+      if (!slot) return;
+      slot.enabled = event.target.checked;
+      persist();
+      render();
+    }
+  });
+
+  els.agendaList.addEventListener('click', function(event) {
+    var slotEl = event.target.closest('.slot');
+    if (!slotEl) return;
+    var id = slotEl.dataset.id;
+
+                                                                        
+    var chev = event.target.closest('[data-action="toggle-open"]');
+    var previewArea = event.target.closest('[data-role="preview"]');
+    if (chev || previewArea) {
+      expanded[id] = !expanded[id];
+      render();
+      return;
+    }
+
+    var btn = event.target.closest('button[data-action]');
+    if (!btn) return;
+    var action = btn.dataset.action;
+    if (action === 'duplicate') duplicateSlot(id);
+    else if (action === 'delete') deleteSlot(id);
+    else if (action === 'merge') mergeWithPrevious(id);
+    else if (action === 'up') moveSlot(id, -1);
+    else if (action === 'down') moveSlot(id, 1);
+    else if (action === 'min-plus') stepMinutes(id, 5);
+    else if (action === 'min-minus') stepMinutes(id, -5);
+  });
+
+                                                                            
+  window.addEventListener('beforeprint', function() {
+    Array.from(els.agendaList.querySelectorAll('textarea')).forEach(autoGrow);
+  });
+
+  hydrate();
+</script>
+</body>
+</html>
